@@ -1,0 +1,12 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "version": "1.7.1",
+    "libraryName": "sp-custom-news",
+    "libraryId": "93a9364e-a7d4-40c8-8b66-810c1f395911",
+    "environment": "spo",
+    "packageManager": "npm",
+    "framework": "react",
+    "isCreatingSolution": true,
+    "componentType": "webpart"
+  }
+}
