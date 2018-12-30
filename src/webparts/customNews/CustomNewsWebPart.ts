@@ -21,7 +21,8 @@ export default class CustomNewsWebPart extends BaseClientSideWebPart<ICustomNews
     const element: React.ReactElement<ICustomNewsProps > = React.createElement(
       CustomNews,
       {
-        description: this.properties.description
+        description: this.properties.description,
+        context : this.context
       }
     );
 
