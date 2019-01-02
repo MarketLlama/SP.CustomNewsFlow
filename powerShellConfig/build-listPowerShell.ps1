@@ -30,7 +30,10 @@ Add-PnPField -DisplayName 'News Date' -InternalName NewsDate -Type DateTime -Lis
 Add-PnPFieldFromXml -FieldXml $xml -List "News"
 Add-PnPField -DisplayName 'News Teaser' -InternalName NewsTeaser -Type Text -List "News"
 Add-PnPField -DisplayName 'News Content' -InternalName NewsContent -Type Note -List "News"
-Add-PnPField -DisplayName 'News Image' -InternalName NewsImage -Type File -List "News" 
+Add-PnPField -DisplayName 'News Image URL' -InternalName NewsImage -Type Text -List "News" 
+Add-PnPField -DisplayName 'Top News' -InternalName TopNews -Type Boolean -List "News"
+Add-PnPField -DisplayName 'Highlight News' -InternalName HighlightNews -Type Boolean -List "News"
+Add-PnPField -DisplayName 'Show Image' -InternalName ShowImage -Type Boolean -List "News"
 
 Disconnect-PnPOnline 
 

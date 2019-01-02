@@ -101,19 +101,23 @@
           background-repeat: no-repeat;
           background-position: center;
           border: none !important;
-          margin-bottom: 10px;
           cursor: pointer;
           background-size: cover;
       }
       .masonry .brick .txt{
           padding : 20px;
+          background-color: #f4f4f4;
       }
+      .masonry .brick .txt a >h2{
+        color: #bfc733 !important;
+    }
+
       .masonry .brick .alt-txt{
           padding : 20px;
           background-color: #55565A;
           color: white;
       }
-          .masonry .brick .alt-txt > a {
+          .masonry .brick .alt-txt a >h2 {
               color: #ffb400 !important;
           }
           
@@ -169,9 +173,11 @@
   .newsLatest-date{
     font-size : 13px;
     color: #999999;
+    padding: 5px;
   }
   .newsLatest-summary{
     font-size: 14px;
+    padding: 5px;
   }
 
   .span {
@@ -248,7 +254,7 @@
       -ms-flex: 4 4 auto;
       flex: 4 4 auto;
       padding: 5px 28px;
-      height: 600px;
+      height: 650px;
       width: 1000px;
   }
 
@@ -263,4 +269,7 @@
       color: "white";
     }
   }
+}
+button[role="gridcell"]{
+  min-width: 1em !important;
 }

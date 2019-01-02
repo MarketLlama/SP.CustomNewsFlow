@@ -1,15 +1,16 @@
 import * as React from 'react';
 import styles from './CustomNews.module.scss';
 import { escape } from '@microsoft/sp-lodash-subset';
-import {sp , Web}  from '@pnp/pnpjs';
+import pnp, {sp , Web}  from '@pnp/pnpjs';
 import { IWebPartContext } from "@microsoft/sp-webpart-base";
 import { Modal } from 'office-ui-fabric-react/lib/Modal';
 import { PrimaryButton, ActionButton } from 'office-ui-fabric-react/lib/Button';
 import { ListItemPicker } from '@pnp/spfx-controls-react';
 import { DatePicker, DayOfWeek, IDatePickerStrings } from 'office-ui-fabric-react/lib/DatePicker';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
-import { Spinner, SpinnerSize } from 'office-ui-fabric-react';
+import { Spinner, SpinnerSize, Checkbox } from 'office-ui-fabric-react';
 import { Logger, LogLevel } from '@pnp/logging';
+import CustomNews from './CustomNews';
 
 const DayPickerStrings: IDatePickerStrings = {
   months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -28,7 +29,8 @@ const DayPickerStrings: IDatePickerStrings = {
 };
 
 export interface CreateNewsProps {
-    context : IWebPartContext
+    context : IWebPartContext;
+    parent : CustomNews;
 }
 
 export interface CreateNewsState {
@@ -38,6 +40,9 @@ export interface CreateNewsState {
     imageFile : File;
     loading : boolean;
     newsHeadline : string;
+    topNews : boolean;
+    highlightedNews : boolean;
+    showImage : boolean;
     newsTeaser : string;
     newsContent : string;
     newsDate? : Date | null;
@@ -53,11 +58,14 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
         newsContent : '',
         newsTeaser : '',
         newsDate : null,
+        topNews : false,
+        showImage : false,
+        highlightedNews : false,
         page : {},
         firstDayOfWeek: DayOfWeek.Sunday,
         loading : false,
         showModal : false
-    }
+    };
   }
 
   public render(): JSX.Element {
@@ -127,6 +135,18 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
             <br />
             <div className="ms-Grid" dir="ltr">
               <div className="ms-Grid-row">
+                  <div className="ms-Grid-col ms-sm4 ms-md4 ms-lg3">
+                    <Checkbox label="Top News" onChange={(value, isChecked) => this.setState({ topNews: isChecked })} />
+                  </div>
+                  <div className="ms-Grid-col ms-sm4 ms-md4 ms-lg3">
+                    <Checkbox label="Highlight News" onChange={(value, isChecked) => this.setState({ highlightedNews: isChecked })} />
+                  </div>
+                  <div className="ms-Grid-col ms-sm4 ms-md4 ms-lg3">
+                    <Checkbox label="Show Image" onChange={(value, isChecked) => this.setState({ showImage: isChecked })} />
+                  </div>
+              </div>
+              <br/>
+              <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-sm6 ms-md6 ms-lg3">
                   <input type="File" accept="image/*"
                     id="file" onChange={(e) => this._handleFile(e.target.files)}
@@ -171,7 +191,7 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
   private _handleFile = (files : FileList) =>{
     this.setState({
       imageFile : files[0]
-    })
+    });
   }
 
   private _showModal = (): void => {
@@ -189,36 +209,46 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
       NewsDate : this.state.newsDate,
       NewsTeaser : this.state.newsTeaser,
       NewsContent : this.state.newsContent,
-      Page : {
-       results : this.state.page.key
-      },
+      TopNews : this.state.topNews,
+      ShowImage : this.state.showImage,
+      HighlightNews : this.state.highlightedNews,
+      PageId : this.state.page.key
     }).then(item =>{
-      console.log(item);
       let uploadId = item.data.Id;
-      console.log(this.props.context.pageContext.site.absoluteUrl);
       const web = new Web(this.props.context.pageContext.site.absoluteUrl);
         // you can adjust this number to control what size files are uploaded in chunks
-      if (this.state.imageFile.size <= 10485760) {
-          // small upload
-         web.getFolderByServerRelativeUrl("PublishingImages")
-          .files.add(this.state.imageFile.name, this.state.imageFile, 
-            true).then(_ => {
-              Logger.write("done");
-              this._closeModal();
-            });
-      } else {
-          // large upload
+      if(this.state.imageFile != null){
+        if (this.state.imageFile.size <= 10485760) {
+            // small upload
           web.getFolderByServerRelativeUrl("PublishingImages")
-            .files.addChunked(this.state.imageFile.name, this.state.imageFile, data => {
-              Logger.log({ data: data, level: LogLevel.Verbose, message: "progress" });
-          }, true).then(_ => {
-            Logger.write("done!");
-            this._closeModal();
-          });
+            .files.add(this.state.imageFile.name, this.state.imageFile, 
+              true).then(_ => {
+                pnp.sp.web.lists.getByTitle("News").items.getById(uploadId).update({
+                  NewsImage: _.data.ServerRelativeUrl,
+              }).then(i => {
+                  this.props.parent.createNewsFlow();
+                  this._closeModal();
+                });
+              });
+        } else {
+            // large upload
+            web.getFolderByServerRelativeUrl("PublishingImages")
+              .files.addChunked(this.state.imageFile.name, this.state.imageFile, data => {
+                Logger.log({ data: data, level: LogLevel.Verbose, message: "progress" });
+            }, true).then(_ => {
+              pnp.sp.web.lists.getByTitle("News").items.getById(uploadId).update({
+                NewsImage: _.data.ServerRelativeUrl,
+            }).then(i => {
+                this.props.parent.createNewsFlow();
+                this._closeModal();
+              });
+            });
+        }
+      } else {
+        this.props.parent.createNewsFlow();
+        this._closeModal();
       }
-      
     })
-    
     .catch(console.log);
   }
 }
