@@ -1,4 +1,4 @@
 export interface ICustomNewsState {
-    news: any[];
+    news: any;
   }
   

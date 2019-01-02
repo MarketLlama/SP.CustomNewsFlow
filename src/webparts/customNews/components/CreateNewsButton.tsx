@@ -9,6 +9,7 @@ import { ListItemPicker } from '@pnp/spfx-controls-react';
 import { DatePicker, DayOfWeek, IDatePickerStrings } from 'office-ui-fabric-react/lib/DatePicker';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react';
+import { Logger, LogLevel } from '@pnp/logging';
 
 const DayPickerStrings: IDatePickerStrings = {
   months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -39,7 +40,7 @@ export interface CreateNewsState {
     newsHeadline : string;
     newsTeaser : string;
     newsContent : string;
-    newsDate : Date;
+    newsDate? : Date | null;
 }
 
 export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNewsState> {
@@ -60,7 +61,7 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
   }
 
   public render(): JSX.Element {
-    const { firstDayOfWeek } = this.state;
+    const { firstDayOfWeek, newsDate } = this.state;
 
     return (
       <div>
@@ -106,6 +107,7 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
                     placeholder="Select a date..."
                     ariaLabel="Select a date"
                     onSelectDate={this._onSelectDate}
+                    value={newsDate!}
                   />
                 </div>
               </div>
@@ -187,12 +189,34 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
       NewsDate : this.state.newsDate,
       NewsTeaser : this.state.newsTeaser,
       NewsContent : this.state.newsContent,
-      PageId : {
+      Page : {
        results : this.state.page.key
       },
     }).then(item =>{
       console.log(item);
-      this._closeModal();
+      let uploadId = item.data.Id;
+      console.log(this.props.context.pageContext.site.absoluteUrl);
+      const web = new Web(this.props.context.pageContext.site.absoluteUrl);
+        // you can adjust this number to control what size files are uploaded in chunks
+      if (this.state.imageFile.size <= 10485760) {
+          // small upload
+         web.getFolderByServerRelativeUrl("PublishingImages")
+          .files.add(this.state.imageFile.name, this.state.imageFile, 
+            true).then(_ => {
+              Logger.write("done");
+              this._closeModal();
+            });
+      } else {
+          // large upload
+          web.getFolderByServerRelativeUrl("PublishingImages")
+            .files.addChunked(this.state.imageFile.name, this.state.imageFile, data => {
+              Logger.log({ data: data, level: LogLevel.Verbose, message: "progress" });
+          }, true).then(_ => {
+            Logger.write("done!");
+            this._closeModal();
+          });
+      }
+      
     })
     
     .catch(console.log);
