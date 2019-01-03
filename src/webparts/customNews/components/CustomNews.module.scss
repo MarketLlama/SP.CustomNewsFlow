@@ -91,6 +91,7 @@
       display:inline-block;
       background-color : #fff;
       width: 100%;
+      position: relative;
     }
       .masonry .brick .img {
           -moz-transition: all .5s ease-in-out;
@@ -117,6 +118,13 @@
           background-color: #55565A;
           color: white;
       }
+          .masonry .brick .feature {
+            position: absolute;
+            right: 0;
+            top: 0;
+            background-color: #ffb40ab8;
+            padding: 5px;
+          }
           .masonry .brick .alt-txt a >h2 {
               color: #ffb400 !important;
           }

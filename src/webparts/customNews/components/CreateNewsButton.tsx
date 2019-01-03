@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styles from './CustomNews.module.scss';
 import { escape } from '@microsoft/sp-lodash-subset';
-import pnp, {sp , Web}  from '@pnp/pnpjs';
+import pnp, {sp , Web, Site}  from '@pnp/pnpjs';
 import { IWebPartContext } from "@microsoft/sp-webpart-base";
 import { Modal } from 'office-ui-fabric-react/lib/Modal';
 import { PrimaryButton, ActionButton } from 'office-ui-fabric-react/lib/Button';
@@ -11,6 +11,7 @@ import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Spinner, SpinnerSize, Checkbox } from 'office-ui-fabric-react';
 import { Logger, LogLevel } from '@pnp/logging';
 import CustomNews from './CustomNews';
+
 
 const DayPickerStrings: IDatePickerStrings = {
   months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -70,7 +71,7 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
 
   public render(): JSX.Element {
     const { firstDayOfWeek, newsDate } = this.state;
-
+    const webUrl : string = this.props.context.pageContext.web.absoluteUrl + '/articles';
     return (
       <div>
         <PrimaryButton
@@ -102,7 +103,8 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
                     columnInternalName='Title'
                     itemLimit={1}
                     onSelectedItem={this._onSelectedItem}
-                    context={this.props.context} />
+                    context={this.props.context} 
+                    webUrl = {webUrl}/>
                 </div>
                 <div className="ms-Grid-col ms-sm6 ms-md6 ms-lg6">
                   <p>
@@ -139,7 +141,7 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
                     <Checkbox label="Top News" onChange={(value, isChecked) => this.setState({ topNews: isChecked })} />
                   </div>
                   <div className="ms-Grid-col ms-sm4 ms-md4 ms-lg3">
-                    <Checkbox label="Highlight News" onChange={(value, isChecked) => this.setState({ highlightedNews: isChecked })} />
+                    <Checkbox label="Featured News" onChange={(value, isChecked) => this.setState({ highlightedNews: isChecked })} />
                   </div>
                   <div className="ms-Grid-col ms-sm4 ms-md4 ms-lg3">
                     <Checkbox label="Show Image" onChange={(value, isChecked) => this.setState({ showImage: isChecked })} />
@@ -201,10 +203,10 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
   private _closeModal = (): void => {
     this.setState({ showModal: false });
   }
-
   
   private _createNews = () : void =>{
-    sp.web.lists.getByTitle("News").items.add({
+    const web = new Web(this.props.context.pageContext.site.absoluteUrl + '/articles');
+    web.lists.getByTitle("News").items.add({
       Title: this.state.newsHeadline,
       NewsDate : this.state.newsDate,
       NewsTeaser : this.state.newsTeaser,

@@ -135,6 +135,7 @@ export default class CustomNews extends React.Component<ICustomNewsProps, ICusto
   private _onRenderNewsCell = (item : newsItem) : JSX.Element =>{
     return (
       <div className={styles.brick}>
+        {item.HighlightNews? <span className={styles.feature}>FEATURED</span> : null}
         {item.ShowImage ? <div style={{backgroundImage: 'url(' + item.ImgageURL + ')'}} 
           className={styles.img} onClick={() => window.location.href = item.PageURL}>
         </div> : null}
