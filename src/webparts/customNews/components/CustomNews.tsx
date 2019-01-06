@@ -134,13 +134,13 @@ export default class CustomNews extends React.Component<ICustomNewsProps, ICusto
 
   private _onRenderNewsCell = (item : newsItem) : JSX.Element =>{
     return (
-      <div className={styles.brick}>
+      <div className={styles.brick + ' animated fadeIn'}>
         {item.HighlightNews? <span className={styles.feature}>FEATURED</span> : null}
         {item.ShowImage ? <div style={{backgroundImage: 'url(' + item.ImgageURL + ')'}} 
-          className={styles.img} onClick={() => window.location.href = item.PageURL}>
+          className={styles.img} onClick={() => window.location.href = item.PageURL + '?isNews=1'}>
         </div> : null}
         <div className={(item.HighlightNews? styles["alt-txt"] : styles.txt)} >
-          <a href={item.PageURL}><h2>{item.Title}</h2></a>
+          <a href={item.PageURL + '?isNews=1'}><h2>{item.Title}</h2></a>
           <div className={styles["newsLatest-date"]}>
               <b><Moment format="DD/MM/YYYY">{item.NewsDate}</Moment></b>
           </div>

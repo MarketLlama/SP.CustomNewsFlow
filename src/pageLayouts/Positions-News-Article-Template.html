@@ -1,0 +1,1305 @@
+<%@ Page language="C#" Inherits="Microsoft.SharePoint.Publishing.PublishingLayoutPage,Microsoft.SharePoint.Publishing,Version=15.0.0.0,Culture=neutral,PublicKeyToken=71e9bce111e9429c" %>
+<%-- SharePoint Register tags --%>
+<%@ Register Tagprefix="SharePointWebControls" Namespace="Microsoft.SharePoint.WebControls" Assembly="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %>
+<%@ Register Tagprefix="WebPartPages" Namespace="Microsoft.SharePoint.WebPartPages" Assembly="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %>
+<%@ Register Tagprefix="PublishingWebControls" Namespace="Microsoft.SharePoint.Publishing.WebControls" Assembly="Microsoft.SharePoint.Publishing, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %>
+<%@ Register Tagprefix="Taxonomy" Namespace="Microsoft.SharePoint.Taxonomy" Assembly="Microsoft.SharePoint.Taxonomy, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %>
+<%-- SharePoint Register tags --%>
+
+<asp:Content ContentPlaceholderID="PlaceHolderAdditionalPageHead" runat="server">
+    <style type="text/css">
+        #sideNavBox {
+            display: none;
+        }
+
+        #contentBox {
+            margin-top: 10px !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        /***********************************************/
+        /***************** Accordion ********************/
+        /***********************************************/
+        .wt-controlpanel-item-title>span,
+        wt-controlpanel-item-title>i {
+            color: white !important;
+        }
+
+        .wt-news-content {
+            padding-bottom: 0 !important;
+        }
+
+        .wt-alreadyLikedByMe,
+        .wt-alreadyLikedByMe + span{
+            color: #0078d7 !important;
+        }
+        .panel-group .panel {
+            border-radius: 0;
+            box-shadow: none;
+            border-color: #EEEEEE;
+        }
+
+        .panel-default .panel-heading {
+            border-radius: 0 !important;
+            color: white !important;
+            background-color: #5f7800 !important;
+            padding: 5px !important;
+        }
+
+        .panel-title {
+            font-size: 14px;
+        }
+
+        .panel-title>a {
+            display: block;
+            padding: 15px;
+            text-decoration: none;
+            color: #fff !important;
+        }
+
+        .panel-title>a>i {
+            color: #fff !important;
+        }
+
+        .panel-title>a:hover {
+            color: #fff !important;
+        }
+
+        .more-less {
+            float: right;
+            color: #212121;
+        }
+
+        .panel-default>.panel-heading+.panel-collapse>.panel-body {
+            border-top-color: #EEEEEE;
+        }
+
+        .ms-rtestate-field ul,
+        .ms-formfieldvaluecontainer ul {
+            list-style: circle;
+        }
+
+        .wizdom-translation .list-group-item .active {
+            color: #fff;
+            background-color: #5f7800 !important;
+            border-color: #5f7800 !important;
+        }
+
+        .toggle-on {
+            color: white !important;
+            background-color: orange !important;
+        }
+
+        .bootstrap-wrapper .checkbox {
+            position: relative;
+            display: inline-block;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding-left: 10px;
+        }
+        .restricted-access .panel-heading {
+            background-color: #EB8200 !important
+        }
+
+        .bootstrap-wrapper .breadcrumb {
+            padding: 20px !important;
+            margin-bottom: 0 !important;
+            font-size: 1.2em;
+        }
+
+        #nav li.background--light {
+            color: black;
+        }
+
+        #nav li.background--dark {
+            color: white;
+        }
+
+        .social-warning>p {
+            text-aligh: center;
+        }
+
+        .wd-noticeboard-comments-panel {
+            padding-top: 0 !important;
+        }
+
+        .catagories>li>a {
+            background-color: #eb8200 !important;
+            color: white !important;
+            margin: 3px;
+        }
+
+        .catagories>li>a:hover {
+            background-color: #1775bc !important;
+            color: white;
+        }
+
+        .emailer {
+            display: none;
+        }
+
+        .something {
+            color: white;
+            /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#313323+1,181914+100&0.35+7,0.28+70 */
+            background: -moz-linear-gradient(top, rgba(49, 51, 35, 0.35) 1%, rgba(47, 49, 34, 0.35) 7%, rgba(31, 33, 25, 0.28) 70%, rgba(24, 25, 20, 0.28) 100%);
+            /* FF3.6-15 */
+            background: -webkit-linear-gradient(top, rgba(49, 51, 35, 0.35) 1%, rgba(47, 49, 34, 0.35) 7%, rgba(31, 33, 25, 0.28) 70%, rgba(24, 25, 20, 0.28) 100%);
+            /* Chrome10-25,Safari5.1-6 */
+            background: linear-gradient(to bottom, rgba(49, 51, 35, 0.35) 1%, rgba(47, 49, 34, 0.35) 7%, rgba(31, 33, 25, 0.28) 70%, rgba(24, 25, 20, 0.28) 100%);
+            /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#59313323', endColorstr='#47181914', GradientType=0);
+            /* IE6-9 */
+        }
+
+        .well{
+            display: none ;
+            border-radius: 0 !important;
+            -webkit-box-shadow: none !important;
+            box-shadow: none !important;
+        }
+        /* Not Mobile */
+        @media (min-width: 768px){}
+
+            .wt-newsContentArea{
+                padding-right : 20px !important;
+            }
+        }
+    </style>
+
+    <SharePointWebControls:cssregistration ID="CssRegistration1" name="<% $SPUrl:https://syngenta.sharepoint.com/sites/positions/Style Library/~language/Themable/Core Styles/pagelayouts15.css %>"
+        runat="server"/>
+
+    <link href="https://syngenta.sharepoint.com/Style%20Library/Helios/assets/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://syngenta.sharepoint.com/Style%20Library/Helios/assets/css/noscript.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css" rel="stylesheet" type="text/css" />
+
+    <PublishingWebControls:editmodepanel ID="EditModePanel1" runat="server">
+        <!-- Styles for edit mode only-->
+        <style type="text/css">
+            .wizdom-bootstrap-wrapper .wt-newsPage .wt-shadow {
+                padding-left: 25px !important;
+                padding-right: 25px !important;
+            }
+
+            .wizdom-bootstrap-wrapper .wt-newsPage .wt-newsContentArea {
+                padding-right: 0;
+            }
+
+            .wizdom-bootstrap-wrapper,
+            #s4-bodyContainer {
+                background-color: #ffffff !important;
+            }
+        </style> <script type="text/javascript">
+            document.documentElement.className += ' wt-editmode ';
+        </script>
+        <SharePointWebControls:cssregistration ID="CssRegistration3" name="<% $SPUrl:https://syngenta.sharepoint.com/sites/positions/Style Library/~language/Themable/Core Styles/editmode15.css %>"
+            After="<% $SPUrl:https://syngenta.sharepoint.com/sites/positions/Style Library/~language/Themable/Core Styles/pagelayouts15.css %>"
+            runat="server" />
+    </PublishingWebControls:EditModePanel>
+    <!-- moved from wizdoms masterpage-->
+    <!-- Wizdom Custom CSS -->
+    <!-- moved to powershell -->
+
+    <!-- Wizdom Custom Scripts -->
+    <!-- moved to globalResource.js -->
+    <!-- end moved from wizdoms masterpage-->
+    <script type="text/template" id="pageColumns">
+        <%-- 
+			Dont change position!
+			Its index based in script that iterates through the values in scriptloader.js
+			Always add to the bottom if needed
+		--%>
+        <div name="Title"><SharePointWebControls:FieldValue FieldName="Title" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;Title&#39; /&gt;&lt;P N=&#39;ItemFieldValue&#39; ID=&#39;1&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAGAQAAABpTeW5nZW50YSBQb3NpdGlvbnMgQXJ0aWNsZQs&#39; /&gt;&lt;P N=&#39;ListItemFieldValue&#39; R=&#39;1&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;2&#39; T=&#39;ctl00&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;3&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;3&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="PublishingContact"><SharePointWebControls:FieldValue FieldName="PublishingContact" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;PublishingContact&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl01&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="W365_HidePageInfo"><SharePointWebControls:FieldValue FieldName="W365_HidePageInfo" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_HidePageInfo&#39; /&gt;&lt;P N=&#39;ItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;ListItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl02&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="W365_Author"><SharePointWebControls:FieldValue FieldName="W365_Author" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_Author&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl03&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="W365_DepartmentContact"><SharePointWebControls:FieldValue FieldName="W365_DepartmentContact" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_DepartmentContact&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl04&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="W365_UseDepartmentContact"><SharePointWebControls:FieldValue FieldName="W365_UseDepartmentContact" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_UseDepartmentContact&#39; /&gt;&lt;P N=&#39;ItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;ListItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl05&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="W365_HidePageContact"><SharePointWebControls:FieldValue FieldName="W365_HidePageContact" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_HidePageContact&#39; /&gt;&lt;P N=&#39;ItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;ListItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl06&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="W365_HideRelatedDocuments"><SharePointWebControls:FieldValue FieldName="W365_HideRelatedDocuments" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_HideRelatedDocuments&#39; /&gt;&lt;P N=&#39;ItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;ListItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl07&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="W365_HideRelatedNews"><SharePointWebControls:FieldValue FieldName="W365_HideRelatedNews" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_HideRelatedNews&#39; /&gt;&lt;P N=&#39;ItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;ListItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl08&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="W365_HideRelatedPages"><SharePointWebControls:FieldValue FieldName="W365_HideRelatedPages" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_HideRelatedPages&#39; /&gt;&lt;P N=&#39;ItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;ListItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl09&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="W365_HideRelatedPeople"><SharePointWebControls:FieldValue FieldName="W365_HideRelatedPeople" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_HideRelatedPeople&#39; /&gt;&lt;P N=&#39;ItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;ListItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl10&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+		<div name="W365_HideLeftMenu"><SharePointWebControls:FieldValue FieldName="W365_HideLeftMenu" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_HideLeftMenu&#39; /&gt;&lt;P N=&#39;ItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;ListItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl11&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+		<div name="W365_HideBreadCrumb"><SharePointWebControls:FieldValue FieldName="W365_HideBreadCrumb" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_HideBreadCrumb&#39; /&gt;&lt;P N=&#39;ItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;ListItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl12&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+		<div name="pageType">contentPage</div>
+        <div name="W365_EnableSocial"><SharePointWebControls:FieldValue FieldName="W365_EnableSocial" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_EnableSocial&#39; /&gt;&lt;P N=&#39;ItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;ListItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl13&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="w365_PageModified"><SharePointWebControls:DateTimeField FieldName="Modified" runat="server" ControlMode="Display" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;Modified&#39; /&gt;&lt;P N=&#39;ItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA9TeXN0ZW0uRGF0ZVRpbWUCAAAABXRpY2tzCGRhdGVEYXRhAAAJEIAD2zRqc9YIgAPbNGpz1ggL&#39; /&gt;&lt;P N=&#39;ListItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA9TeXN0ZW0uRGF0ZVRpbWUCAAAABXRpY2tzCGRhdGVEYXRhAAAJEIAD2zRqc9YIgAPbNGpz1ggL&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl14&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="w365_PageEditor"><SharePointWebControls:FieldValue FieldName="Editor" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;Editor&#39; /&gt;&lt;P N=&#39;ItemFieldValue&#39; ID=&#39;1&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAGAQAAAJYBMTg7I1dpbGxpYW1zIE1hcmsgKGV4dCkgR0JNQywjaTowIy5mfG1lbWJlcnNoaXB8czk1MTc1NEBzeW5nZW50YS5vcmcsI01hcmsuV2lsbGlhbXNAc3luZ2VudGEuY29tLCNNYXJrLldpbGxpYW1zQHN5bmdlbnRhLmNvbSwjV2lsbGlhbXMgTWFyayAoZXh0KSBHQk1DCw&#39; /&gt;&lt;P N=&#39;ListItemFieldValue&#39; R=&#39;1&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;2&#39; T=&#39;ctl15&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;3&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;3&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="W365_NewsDate"><SharePointWebControls:DateTimeField FieldName="W365_NewsDate" runat="server" ControlMode="Display" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_NewsDate&#39; /&gt;&lt;P N=&#39;ItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA9TeXN0ZW0uRGF0ZVRpbWUCAAAABXRpY2tzCGRhdGVEYXRhAAAJEON1vNkec9YI43W82R5z1ogL&#39; /&gt;&lt;P N=&#39;ListItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA9TeXN0ZW0uRGF0ZVRpbWUCAAAABXRpY2tzCGRhdGVEYXRhAAAJEON1vNkec9YI43W82R5z1ogL&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl16&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="W365_RelatedTopic"><SharePointWebControls:FieldValue FieldName="W365_RelatedTopic" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_RelatedTopic&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl17&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="W365_Language"><SharePointWebControls:FieldValue FieldName="W365_Language" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_Language&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl18&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="W365_Departments"><SharePointWebControls:FieldValue FieldName="W365_Departments" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_Departments&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl19&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="W365_Locations"><SharePointWebControls:FieldValue FieldName="W365_Locations" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_Locations&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl20&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+        <div name="W365_Modul">Corporatenews</div>
+        <div name="W365_InstanceId"><SharePointWebControls:FieldValue FieldName="W365_InstanceId" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_InstanceId&#39; /&gt;&lt;P N=&#39;ItemFieldValue&#39; ID=&#39;1&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAGAQAAABhJbnN0YW5jZSBpZCBmaWVsZCB2YWx1ZS4L&#39; /&gt;&lt;P N=&#39;ListItemFieldValue&#39; R=&#39;1&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;2&#39; T=&#39;ctl21&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;3&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;3&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+		<div name="W365_EnableMachineTranslation"><SharePointWebControls:FieldValue FieldName="W365_EnableMachineTranslation" runat="server" __designer:Preview="" __designer:Values="&lt;P N=&#39;FieldName&#39; T=&#39;W365_EnableMachineTranslation&#39; /&gt;&lt;P N=&#39;ItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;ListItemFieldValue&#39; Serial=&#39;AAEAAAD/////AQAAAAAAAAAEAQAAAA5TeXN0ZW0uQm9vbGVhbgEAAAAHbV92YWx1ZQABAQs&#39; /&gt;&lt;P N=&#39;Visible&#39; T=&#39;True&#39; /&gt;&lt;P N=&#39;ControlMode&#39; E=&#39;1&#39; /&gt;&lt;P N=&#39;ID&#39; ID=&#39;1&#39; T=&#39;ctl22&#39; /&gt;&lt;P N=&#39;Page&#39; ID=&#39;2&#39; /&gt;&lt;P N=&#39;TemplateControl&#39; R=&#39;2&#39; /&gt;&lt;P N=&#39;AppRelativeTemplateSourceDirectory&#39; R=&#39;-1&#39; /&gt;"/></div>
+    </script>
+</asp:Content>
+<asp:Content ContentPlaceHolderId="PlaceHolderPageTitle" runat="server">
+    <SharePointWebControls:fieldvalue ID="FieldValue1" FieldName="Title" runat="server"/>
+</asp:Content>
+<asp:Content ContentPlaceHolderId="PlaceHolderPageTitleInTitleArea" runat="server">
+    <SharePointWebControls:fieldvalue ID="FieldValue2" FieldName="Title" runat="server"/>
+</asp:Content>
+<asp:Content ContentPlaceHolderId="PlaceHolderTitleBreadcrumb" runat="server">
+    <SharePointWebControls:listsitemappath ID="ListSiteMapPath1" runat="server" SiteMapProviders="CurrentNavigationSwitchableProvider"
+        RenderCurrentNodeAsLink="false" PathSeparator="" CssClass="s4-breadcrumb" NodeStyle-CssClass="s4-breadcrumbNode"
+        CurrentNodeStyle-CssClass="s4-breadcrumbCurrentNode" RootNodeStyle-CssClass="s4-breadcrumbRootNode"
+        NodeImageOffsetX=0 NodeImageOffsetY=289 NodeImageWidth=16 NodeImageHeight=16 NodeImageUrl="/_layouts/15/images/fgimg.png?rev=23"
+        HideInteriorRootNodes="true" SkipLinkText=""/>
+</asp:Content>
+<asp:Content ContentPlaceHolderId="PlaceHolderPageDescription" runat="server">
+    <SharePointWebControls:projectproperty ID="ProjectProperty1" Property="Description" runat="server"/>
+</asp:Content>
+<asp:Content ContentPlaceHolderId="PlaceHolderMain" runat="server">
+    <div class="wt-2column wt-2column-news wt-newsPage wt-white" id="wizdomPageLayout" ng-controller="wizdom365CorporateNewsInfo">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="wt-news-thumb" id="wt-news-thumb">
+                    <div class="bootstrap-wrapper">
+                        <nav class="animated slideInDown slow something" id="nav" style="font-weight: 500;">
+                            <ul>
+                                <li>
+                                    <a href="/sites/positions/Pages/Default.aspx">Positions Home</a></li>
+                                <li>
+                                    <a href="/sites/positions/Pages/Syngenta.aspx">Syngenta</a></li>
+                                <li>
+                                    <a href="/sites/positions/Pages/Solutions.aspx">Solutions</a></li>
+                                <li>
+                                    <a href="/sites/positions/Pages/Technology.aspx">Technology</a></li>
+                                <li>
+                                    <a href="/sites/positions/Pages/IP-Regulatory.aspx">IP &amp; Regulatory</a></li>
+                                <li>
+                                    <a href="/sites/positions/Pages/Responsible-Ag.aspx">Responsible Ag</a></li>
+                                <li>
+                                    <a href="/sites/positions/Pages/Environment.aspx">Environment</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <PublishingWebControls:richimagefield ID="NewsImageField" runat="server" FieldName="PublishingRollupImage"/>
+                </div>
+                <div class="col-sm-9 wt-shadow bootstrap-wrapper">
+                    <div class="container-fluid wd-noticeboard">
+                        <div class="row wt-news-videoRow wizdom-news">
+                            <div class="col-xs-12" style="padding: 0;">
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-3">
+                                <div style="text-align: center;" wizdom365-item-social-container itemid="socialId"
+                                    itemtype="corporateNews" item="item" tooltipposition="top" ng-if="socialFeatureEnabled && socialEnabledOnItem">
+                                </div>
+                                <div style="text-align:center; padding-top:5px">
+                                    <button type="button" class="btn btn-primary subscribe-button" style="margin-bottom:5px; border-radius: 3px;padding: 3px 5px;font-size: 14px;color: white;font-weight: 600;cursor:pointer">
+                                        <span style="color:white; padding-right:5px" class="glyphicon glyphicon-heart"
+                                            aria-hidden="true"></span>Subscribe</button>
+                                </div>
+                                <div class="bootstrap-wrapper ms-webpart-chrome
+                        wizdom-pageInfo
+                        text-center ms-webpartzone-cell">
+                                    <div class="ms-webpart-chrome-title">
+                                        <span>
+                                            <h2 style="text-align: justify;" class="ms-webpart-titletext">
+                                                <nobr>Contacts</nobr>
+                                            </h2>
+                                        </span>
+                                    </div>
+                                    <div class="ms-wpContentDivSpace">
+                                        <div class="ms-WPBody wizdom-pageInfo-container positions-contacts">
+                                        </div>
+                                    </div>
+                                    <style type="text/css">
+                                        @media print {
+                                            a[href]:after {
+                                                content: none !important;
+                                            }
+
+                                            .wt-shadow {
+                                                padding-top: 25px !important;
+                                            }
+
+                                            .translation-panel .translation-btn {
+                                                display: none !important;
+                                            }
+                                        }
+                                    </style>
+                                </div>
+                                <div class="animate fadeIn slow emailer">
+                                    <WebPartPages:clientsidewebpart runat="server" ClientSideWebPartId="6bb45d21-965b-4ad4-83db-7757e9aefa29"
+                                        ClientSideWebPartData="&lt;div data-sp-webpart=&quot;&quot; data-sp-webpartdataversion=1.0 data-sp-webpartdata=&quot;&amp;#123;&amp;quot;id&amp;quot;&amp;#58;&amp;quot;6bb45d21-965b-4ad4-83db-7757e9aefa29&amp;quot;,&amp;quot;instanceId&amp;quot;&amp;#58;&amp;quot;1674645c-a5a3-4539-b7f1-a497f472b880&amp;quot;,&amp;quot;title&amp;quot;&amp;#58;&amp;quot;SharePoint Subscription Emailer&amp;quot;,&amp;quot;description&amp;quot;&amp;#58;&amp;quot;SharePoint Emailer for Positions site, will email subscribers of a page.&amp;quot;,&amp;quot;dataVersion&amp;quot;&amp;#58;&amp;quot;1.0&amp;quot;,&amp;quot;properties&amp;quot;&amp;#58;&amp;#123;&amp;quot;description&amp;quot;&amp;#58;&amp;quot;SharePoint Subscription Emailer&amp;quot;&amp;#125;&amp;#125;&quot;&gt;&lt;div data-sp-componentid=&quot;&quot;&gt;6bb45d21-965b-4ad4-83db-7757e9aefa29&lt;/div&gt;&lt;div data-sp-htmlproperties=&quot;&quot;&gt;&lt;/div&gt;&lt;/div&gt;"
+                                        Title="SharePoint Subscription Emailer" FrameType="Default"
+                                        SuppressWebPartChrome="False" Description="SharePoint Emailer for Positions site, will email subscribers of a page."
+                                        IsIncluded="True" ZoneID="" PartOrder="1" FrameState="Normal" AllowRemove="True"
+                                        AllowZoneChange="True" AllowMinimize="True" AllowConnect="True" AllowEdit="True"
+                                        AllowHide="True" IsVisible="True" DetailLink="" HelpLink="" HelpMode="Modeless"
+                                        Dir="Default" PartImageSmall="" MissingAssembly="Cannot Import WebPart"
+                                        ImportErrorMessage="Cannot Import WebPart" PartImageLarge="" IsIncludedFilter=""
+                                        ExportControlledProperties="True" ConnectionID="00000000-0000-0000-0000-000000000000"
+                                        ID="g_a5caa948_7e5b_49d3_9608_8eb7e47a6600" ExportMode="All" __MarkupType="vsattributemarkup"
+                                        __WebPartId="{a5caa948-7e5b-49d3-9608-8eb7e47a6600}" WebPart="true" Height=""
+                                        Width=""></WebPartPages:ClientSideWebPart>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-9">
+                                <div class="wt-newsContentArea">
+                                    <button id="collapse-button" style="margin-left: 40px;display:none;float:right" data-toggle="tooltip" title="Collapse All"
+                                        type="button" class="btn btn-default">
+                                        <span class="glyphicon glyphicon-resize-small"></span>
+                                    </button>
+                                    <button id="expand-button" style="margin-left: 40px;float:right" type="button" data-toggle="tooltip" title="Expand All"
+                                        class="btn btn-default">
+                                        <span class="glyphicon glyphicon-resize-full"></span>
+                                    </button>
+                                    <div style="float: right;" class="wt-page-translation" data-toggle="tooltip" data-html="true" 
+                                        title="Select a language for machine translation. <i>Note that only the English version has been reviewed and approved.</i>" wizdom365-pagetranslation ui="true"></div>
+                                    <h1 class="wt-news-title">
+                                        <SharePointWebControls:textfield ID="TextField1" runat="server" FieldName="Title"/>
+                                    </h1>
+                                    <PublishingWebControls:editmodepanel runat="server" ID="EditModePanelNewsDate">
+                                        <SharePointWebControls:datetimefield ID="NewsDateField" runat="server"
+                                            FieldName="W365_NewsDate" />
+                                    </PublishingWebControls:EditModePanel>
+
+                                    <div class="wt-news-content">
+                                        <div style="padding-bottom:10px" class="row">
+                                            <h4 style="float: left;padding-left: 15px;">Last Review :<span class="lastReviewDate">
+											<SharePointWebControls:datetimefield FieldName="b2cb531e-fac9-4a85-9705-f1423a56d265"
+                                                    runat="server"/></span>
+                                            </h4>
+                                        </div>
+                                        <div class="row">
+                                            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                                <div class="animated fadeIn well"><h4>Company Perspective</h4>
+                                                    <div style="display:none" class="panel panel-default animated fadeIn">
+                                                        <div>
+                                                            <div class="panel-heading" role="tab" id="headingOne">
+                                                                <h4 class="panel-title">
+                                                                    <a role="button" data-toggle="collapse" data-parent="#accordion"
+                                                                        href="#collapseOne" aria-expanded="true"
+                                                                        aria-controls="collapseOne">
+                                                                        <i class="more-less glyphicon glyphicon-plus"></i>Key Messages</a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel"
+                                                                aria-labelledby="headingOne">
+                                                                <div class="panel-body">
+                                                                    <PublishingWebControls:richhtmlfield FieldName="c44f7e31-012a-4bc5-a2ec-f267463d88ea"
+                                                                        MinimumEditHeight="400px" runat="server"></PublishingWebControls:RichHtmlField>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style="display:none" class="panel panel-default animated fadeIn">
+                                                        <div>
+                                                            <div class="panel-heading" role="tab" id="headingTwo">
+                                                                <h4 class="panel-title">
+                                                                    <a class="collapsed" role="button" data-toggle="collapse"
+                                                                        data-parent="#accordion" href="#collapseTwo"
+                                                                        aria-expanded="false" aria-controls="collapseTwo">
+                                                                        <i class="more-less glyphicon glyphicon-plus"></i>Proof Points</a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel"
+                                                                aria-labelledby="headingTwo">
+                                                                <div class="panel-body">
+                                                                    <PublishingWebControls:richhtmlfield FieldName="53413615-1bc9-4c41-93c6-12afcb5f4d69"
+                                                                        MinimumEditHeight="400px" runat="server"></PublishingWebControls:RichHtmlField>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style="display:none" class="panel panel-default animated fadeIn">
+                                                        <div>
+                                                            <div class="panel-heading" role="tab" id="headingThree">
+                                                                <h4 class="panel-title">
+                                                                    <a class="collapsed" role="button" data-toggle="collapse"
+                                                                        data-parent="#accordion" href="#collapseThree"
+                                                                        aria-expanded="false" aria-controls="collapseThree">
+                                                                        <i class="more-less glyphicon glyphicon-plus"></i>Position</a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapseThree" class="panel-collapse collapse" role="tabpanel"
+                                                                aria-labelledby="headingThree">
+                                                                <div class="panel-body">
+                                                                    <PublishingWebControls:richhtmlfield FieldName="a7f9f3f2-b0c3-4dfc-af04-38df9442f63a"
+                                                                        MinimumEditHeight="400px" runat="server"></PublishingWebControls:RichHtmlField>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style="display:none" class="panel panel-default animated fadeIn">
+                                                        <div>
+                                                            <div class="panel-heading" role="tab" id="headingEight">
+                                                                <h4 class="panel-title">
+                                                                    <a class="collapsed" role="button" data-toggle="collapse"
+                                                                        data-parent="#accordion" href="#collapseEight"
+                                                                        aria-expanded="false" aria-controls="collapseThree">
+                                                                        <i class="more-less glyphicon glyphicon-plus"></i>External FAQs</a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapseEight" class="panel-collapse collapse" role="tabpanel"
+                                                                aria-labelledby="headingEight">
+                                                                <div class="panel-body">
+                                                                    <PublishingWebControls:richhtmlfield FieldName="87cf74f3-9d67-4d74-9937-0d4c267936b8"
+                                                                        MinimumEditHeight="400px" runat="server"></PublishingWebControls:RichHtmlField>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style="display:none" class="panel panel-default animated fadeIn">
+                                                        <div>
+                                                            <div class="panel-heading" role="tab" id="headingTen">
+                                                                <h4 class="panel-title">
+                                                                    <a class="collapsed" role="button" data-toggle="collapse"
+                                                                        data-parent="#accordion" href="#collapseTen"
+                                                                        aria-expanded="false" aria-controls="collapseThree">
+                                                                        <i class="more-less glyphicon glyphicon-plus"></i>Supporting Q&As</a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapseTen" class="panel-collapse collapse" role="tabpanel"
+                                                                aria-labelledby="headingTen">
+                                                                <div class="panel-body">
+                                                                    <PublishingWebControls:richhtmlfield FieldName="a361e9b1-09d0-49d3-9b77-1c8d5ab94e67"
+                                                                        MinimumEditHeight="400px" runat="server"></PublishingWebControls:RichHtmlField>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="animated fadeIn well"><h4>Issue Overview</h4>
+                                                    <div style="display:none" class="panel panel-default animated fadeIn">
+                                                        <div>
+                                                            <div class="panel-heading" role="tab" id="headingFour">
+                                                                <h4 class="panel-title">
+                                                                    <a class="collapsed" role="button" data-toggle="collapse"
+                                                                        data-parent="#accordion" href="#collapseFour"
+                                                                        aria-expanded="false" aria-controls="collapseThree">
+                                                                        <i class="more-less glyphicon glyphicon-plus"></i>Issue Description</a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapseFour" class="panel-collapse collapse" role="tabpanel"
+                                                                aria-labelledby="headingFour">
+                                                                <div class="panel-body">
+                                                                    <PublishingWebControls:richhtmlfield FieldName="bab3ef7c-51c0-41be-ab4d-af8f5e359f91"
+                                                                        MinimumEditHeight="400px" runat="server"></PublishingWebControls:RichHtmlField>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style="display:none" class="panel panel-default animated fadeIn">
+                                                        <div>
+                                                            <div class="panel-heading" role="tab" id="headingFive">
+                                                                <h4 class="panel-title">
+                                                                    <a class="collapsed" role="button" data-toggle="collapse"
+                                                                        data-parent="#accordion" href="#collapseFive"
+                                                                        aria-expanded="false" aria-controls="collapseThree">
+                                                                        <i class="more-less glyphicon glyphicon-plus"></i>Context</a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapseFive" class="panel-collapse collapse" role="tabpanel"
+                                                                aria-labelledby="headingFive">
+                                                                <div class="panel-body">
+                                                                    <PublishingWebControls:richhtmlfield FieldName="9cdce641-0b15-4dc3-befe-2f2b830133c0"
+                                                                        MinimumEditHeight="400px" runat="server"></PublishingWebControls:RichHtmlField>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="animated fadeIn well"><h4>Further Information</h4>
+                                                    <div style="display:none" class="panel panel-default animated fadeIn">
+                                                        <div>
+                                                            <div class="panel-heading" role="tab" id="headingTwelve">
+                                                                <h4 class="panel-title">
+                                                                    <a class="collapsed" role="button" data-toggle="collapse"
+                                                                        data-parent="#accordion" href="#collapseTwelve"
+                                                                        aria-expanded="false" aria-controls="collapseThree">
+                                                                        <i class="more-less glyphicon glyphicon-plus"></i>Links</a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapseTwelve" class="panel-collapse collapse" role="tabpanel"
+                                                                aria-labelledby="headingTwelve">
+                                                                <div class="panel-body">
+                                                                    <PublishingWebControls:richhtmlfield FieldName="e416586d-a966-48e1-bdca-3897e8486593"
+                                                                        MinimumEditHeight="400px" runat="server"></PublishingWebControls:RichHtmlField>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style="display:none" class="panel panel-default animated fadeIn">
+                                                        <div>
+                                                            <div class="panel-heading" role="tab" id="headingNine">
+                                                                <h4 class="panel-title">
+                                                                    <a class="collapsed" role="button" data-toggle="collapse"
+                                                                        data-parent="#accordion" href="#collapseNine"
+                                                                        aria-expanded="false" aria-controls="collapseThree">
+                                                                        <i class="more-less glyphicon glyphicon-plus"></i>Facts & Figures</a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapseNine" class="panel-collapse collapse" role="tabpanel"
+                                                                aria-labelledby="headingNine">
+                                                                <div class="panel-body">
+                                                                    <PublishingWebControls:richhtmlfield FieldName="66cefdba-0de0-45d0-b0c4-e0ad32212917"
+                                                                        MinimumEditHeight="400px" runat="server"></PublishingWebControls:RichHtmlField>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style="display:none" id='news-pannel' class="panel panel-default animated fadeIn">
+                                                        <div>
+                                                            <div class="panel-heading" role="tab" id="headingEleven">
+                                                                <h4 class="panel-title">
+                                                                    <a class="collapsed" role="button" data-toggle="collapse"
+                                                                        data-parent="#accordion" href="#collapseEleven"
+                                                                        aria-expanded="false" aria-controls="collapseThree">
+                                                                        <i class="more-less glyphicon glyphicon-plus"></i>News</a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapseEleven" class="panel-collapse collapse" role="tabpanel"
+                                                                aria-labelledby="headingEleven">
+                                                                <div class="panel-body">
+                                                                    <WebPartPages:ClientSideWebPart runat="server" ClientSideWebPartId="a3899f89-d17b-45dc-beaa-c697359e3bf9" ClientSideWebPartData="&lt;div data-sp-webpart=&quot;&quot; data-sp-webpartdataversion=1.0 data-sp-webpartdata=&quot;&amp;#123;&amp;quot;id&amp;quot;&amp;#58;&amp;quot;a3899f89-d17b-45dc-beaa-c697359e3bf9&amp;quot;,&amp;quot;instanceId&amp;quot;&amp;#58;&amp;quot;g_8ddbcbbf_5ee2_4952_aeab_c59e207a4082&amp;quot;,&amp;quot;title&amp;quot;&amp;#58;&amp;quot;Positions News Viewer&amp;quot;,&amp;quot;description&amp;quot;&amp;#58;&amp;quot;Positions News Viewer description&amp;quot;,&amp;quot;dataVersion&amp;quot;&amp;#58;&amp;quot;1.0&amp;quot;,&amp;quot;properties&amp;quot;&amp;#58;&amp;#123;&amp;quot;description&amp;quot;&amp;#58;&amp;quot;Positions News Viewer&amp;quot;&amp;#125;&amp;#125;&quot; data-sp-splinksapplied=true&gt;&lt;div data-sp-componentid=&quot;&quot;&gt;a3899f89-d17b-45dc-beaa-c697359e3bf9&lt;/div&gt;&lt;div data-sp-htmlproperties=&quot;&quot;&gt;&lt;/div&gt;&lt;/div&gt;" Title="Positions News Viewer" FrameType="None" SuppressWebPartChrome="False" Description="Positions News Viewer description" IsIncluded="True" ZoneID="" PartOrder="1" FrameState="Normal" AllowRemove="True" AllowZoneChange="True" AllowMinimize="True" AllowConnect="True" AllowEdit="True" AllowHide="True" IsVisible="True" DetailLink="" HelpLink="" HelpMode="Modeless" Dir="Default" PartImageSmall="" MissingAssembly="Cannot Import WebPart" ImportErrorMessage="Cannot Import WebPart" PartImageLarge="" IsIncludedFilter="" ExportControlledProperties="True" ConnectionID="00000000-0000-0000-0000-000000000000" ID="g_dd95214b_4166_466b_af9a_381185741a46" ChromeType="None" ExportMode="All" __MarkupType="vsattributemarkup" __WebPartId="{dd95214b-4166-466b-af9a-381185741a46}" WebPart="true" Height="" Width=""></WebPartPages:ClientSideWebPart>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style="display:none" class="panel panel-default animated fadeIn restricted-access">
+                                                        <div>
+                                                            <div class="panel-heading" role="tab" id="headingThriteen">
+                                                                <h4 class="panel-title">
+                                                                    <a class="collapsed" role="button" data-toggle="collapse"
+                                                                        data-parent="#accordion" href="#collapseThriteen"
+                                                                        aria-expanded="false" aria-controls="collapseThree">
+                                                                        <i class="more-less glyphicon glyphicon-plus"></i>Background</a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapseThriteen" class="panel-collapse collapse" role="tabpanel"
+                                                                aria-labelledby="headingThriteen">
+                                                                <div class="panel-body">
+                                                                    <PublishingWebControls:richhtmlfield FieldName="01e5a760-3118-4957-9cf3-80939fa61b66"
+                                                                        MinimumEditHeight="400px" runat="server"></PublishingWebControls:RichHtmlField>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style="display:none" class="panel panel-default animated fadeIn restricted-access">
+                                                        <div>
+                                                            <div class="panel-heading" role="tab" id="headingFourteen">
+                                                                <h4 class="panel-title">
+                                                                    <a class="collapsed" role="button" data-toggle="collapse"
+                                                                        data-parent="#accordion" href="#collapseFourteen"
+                                                                        aria-expanded="false" aria-controls="collapseThree">
+                                                                        <i class="more-less glyphicon glyphicon-plus"></i>Reactive Statements</a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapseFourteen" class="panel-collapse collapse" role="tabpanel"
+                                                                aria-labelledby="headingFourteen">
+                                                                <div class="panel-body">
+                                                                    <PublishingWebControls:richhtmlfield FieldName="6f980ca5-f0bb-4bdf-972b-6fbd0aa9dbfe"
+                                                                        MinimumEditHeight="400px" runat="server"></PublishingWebControls:RichHtmlField>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style="display:none" class="panel panel-default animated fadeIn restricted-access">
+                                                        <div>
+                                                            <div class="panel-heading" role="tab" id="headingFithteen">
+                                                                <h4 class="panel-title">
+                                                                    <a class="collapsed" role="button" data-toggle="collapse"
+                                                                        data-parent="#accordion" href="#collapseFithteen"
+                                                                        aria-expanded="false" aria-controls="collapseThree">
+                                                                        <i class="more-less glyphicon glyphicon-plus"></i>Restricted Use Q&A</a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapseFithteen" class="panel-collapse collapse" role="tabpanel"
+                                                                aria-labelledby="headingFithteen">
+                                                                <div class="panel-body">
+                                                                    <PublishingWebControls:richhtmlfield MinimumEditHeight="400px"
+                                                                        FieldName="7295f1ca-85a2-4b77-b6b9-1459e9bb90aa"
+                                                                        runat="server"></PublishingWebControls:RichHtmlField>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style="display:none" class="panel panel-default animated fadeIn restricted-access">
+                                                        <div>
+                                                            <div class="panel-heading" role="tab" id="headingSixteen">
+                                                                <h4 class="panel-title">
+                                                                    <a class="collapsed" role="button" data-toggle="collapse"
+                                                                        data-parent="#accordion" href="#collapseSixteen"
+                                                                        aria-expanded="false" aria-controls="collapseThree">
+                                                                        <i class="more-less glyphicon glyphicon-plus"></i>Archive</a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapseSixteen" class="panel-collapse collapse" role="tabpanel"
+                                                                aria-labelledby="headingSixteen">
+                                                                <div class="panel-body">
+                                                                    <PublishingWebControls:richhtmlfield FieldName="180f4cc2-b0b4-48aa-8198-131978fdf63b"
+                                                                        MinimumEditHeight="400px" runat="server"></PublishingWebControls:RichHtmlField>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div><!-- panel-group -->
+                                        </div><!-- container -->
+                                        <!-- .// Accordion -->
+                                    </div>
+                                    <div class="animated fadeIn slow social-warning">
+                                        <p><i>Comments are visible to all users. They do not trigger automated alerts
+                                                to the topic experts. For sharing specific feedback with them, do use
+                                                the e-mail addresses provided under ‘contact’.</i></p>
+                                    </div>
+                                    <div wizdom365-comments-panel itemid="socialId" itemtype="corporateNews" item="item"
+                                        ng-if="socialFeatureEnabled && socialEnabledOnItem">
+                                    </div>
+                                    <div wizdom365-relatednews="newsPage" id="relatednews_plc" class="wt-pagecontrol"></div>
+                                    <div style="padding: 20px;text-align: center;font-size: 14px;">
+                                        <span>See an issue, contact <a href="mailto:ourpointofview@syngenta.com?subject=Syngenta Positions Site">Site Administration</a></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3 wt-right-column wt-shadow-panel">
+                    <!-- Wizdom Pagesettings -->
+                    <PublishingWebControls:editmodepanel runat="server" PageDisplayMode="Edit">
+                        <div id="instanceIdWrapper" style="display:none">
+                            <SharePointWebControls:textfield ID="InstanceId" runat="server" FieldName="W365_InstanceId"></SharePointWebControls:TextField>
+                        </div>
+                        <div class="bootstrap-wrapper" ng-controller="wizdomPageSettings">
+                            <div id="wizsettingsctrl" class="wt-controlpanel panel-group" role="tablist"
+                                aria-multiselectable="true">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading" role="tab" id="side-headingOne">
+                                        <h4 class="panel-title">
+                                            <a class="collapsed" ng-click="panels[0].isOpen = !panels[0].isOpen"
+                                                data-toggle="collapse" href="#side-collapseOne" aria-expanded="true"
+                                                aria-controls="collapseOne">
+                                                <div class="wt-controlpanel-item-title">
+                                                    <span class="ms-Icon ms-Icon--Settings editPanelTopAlignment"
+                                                        aria-hidden="true"></span>
+                                                    <span>{{"General" | translate}}</span><i class="pull-right ms-Icon editPanelTopAlignment"
+                                                        ng-class="{'ms-Icon--ChevronDown': panels[0].isOpen, 'ms-Icon--ChevronRight': !panels[0].isOpen}"></i></div>
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="side-collapseOne" class="panel-collapse collapse" role="tabpanel"
+                                        aria-labelledby="side-headingOne">
+                                        <div class="panel-body">
+                                            <ul class="ul-reset">
+                                                <li ng-hide="disabledPageInfo">
+                                                    <SharepointWebControls:booleanfield ID="W365_HidePageInfo_Field"
+                                                        runat="server" FieldName="W365_HidePageInfo" />
+                                                </li>
+                                                <li ng-if="disabledPageInfo" class="ms-status-yellow" style="padding-left: 10px;">{{"Hide
+                                                    page information is disabled" | translate}}</li>
+                                                <li>
+                                                    <SharePointWebControls:booleanfield ID="topnewsid" runat="server"
+                                                        FieldName="W365_TopNews" />
+                                                </li>
+                                                <li id="wt-hidebreadcrumb">
+                                                    <SharePointWebControls:booleanfield ID="W365_HideBreadCrumb_BooleanField"
+                                                        runat="server" FieldName="W365_HideBreadCrumb" />
+                                                </li>
+                                                <li ng-show="socialFeatureEnabled">
+                                                    <SharePointWebControls:booleanfield ID="enablesocial" runat="server"
+                                                        FieldName="W365_EnableSocial" />
+                                                </li>
+                                                <li ng-show="machineTranslationEnabled && localMachineTranslationEnabled"
+                                                    id="wt-enablemachinetranslation">
+                                                    <SharePointWebControls:booleanfield ID="W365_EnableMachineTranslation_BooleanField"
+                                                        runat="server" FieldName="W365_EnableMachineTranslation" />
+                                                </li>
+                                                <li ng-hide="disabledPageInfo" id="wt-author">
+                                                    <SharepointWebControls:userfield ID="W365_Author_Field" runat="server"
+                                                        FieldName="W365_Author" />
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="panel panel-default">
+                                    <div class="panel-heading" role="tab" id="side-headingTwo">
+                                        <h4 class="panel-title">
+                                            <a class="collapsed" ng-click="panels[1].isOpen = !panels[1].isOpen"
+                                                data-toggle="collapse" href="#side-collapseTwo" aria-expanded="false"
+                                                aria-controls="collapseTwo">
+                                                <div class="wt-controlpanel-item-title">
+                                                    <span class="ms-Icon ms-Icon--Contact editPanelTopAlignment"
+                                                        aria-hidden="true"></span>
+                                                    <span>{{"Contact settings" | translate}}</span><i class="pull-right ms-Icon editPanelTopAlignment"
+                                                        ng-class="{'ms-Icon--ChevronDown': panels[1].isOpen, 
+															  'ms-Icon--ChevronRight': !panels[1].isOpen}"></i></div>
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="side-collapseTwo" class="panel-collapse collapse" role="tabpanel"
+                                        aria-labelledby="side-headingTwo">
+                                        <div class="panel-body">
+                                            <ul class="ul-reset">
+                                                <li id="wt-publishingcontact" class="wt-publishingcontact">
+                                                    <SharepointWebControls:userfield ID="PublishingContact_Field" runat="server"
+                                                        FieldName="PublishingContact" />
+                                                </li>
+                                                <li id="wt-departmentcontact" class="wt-departmentcontact">
+                                                    <Taxonomy:taxonomyfieldcontrol ID="W365_DepartmentContact_Field"
+                                                        runat="server" FieldName="W365_DepartmentContact" />
+                                                </li>
+                                                <li>
+                                                    <SharepointWebControls:booleanfield ID="W365_UseDepartmentContact_Field"
+                                                        runat="server" FieldName="W365_UseDepartmentContact" />
+                                                </li>
+                                                <li ng-hide="disabledPageContact">
+                                                    <SharepointWebControls:booleanfield ID="W365_HidePageContact_Field"
+                                                        runat="server" FieldName="W365_HidePageContact" />
+                                                </li>
+                                                <li ng-if="disabledPageContact" class="ms-status-yellow" style="padding-left: 10px;">
+												    {{"Hide contact information is disabled" | translate}}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading" role="tab" id="side-headingThree">
+                                        <h4 class="panel-title">
+                                            <a class="collapsed" ng-click="panels[2].isOpen = !panels[2].isOpen"
+                                                data-toggle="collapse" href="#side-collapseThree" aria-expanded="false"
+                                                aria-controls="collapseThree">
+                                                <div class="wt-controlpanel-item-title">
+                                                    <span class="ms-Icon ms-Icon--BuildQueue editPanelTopAlignment"aria-hidden="true"></span>
+                                                    <span>{{"Related Content" | translate}}</span><i class="pull-right ms-Icon editPanelTopAlignment"
+                                                        ng-class="{'ms-Icon--ChevronDown': panels[2].isOpen, 
+															  'ms-Icon--ChevronRight': !panels[2].isOpen}"></i></div>
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="side-collapseThree" class="panel-collapse collapse" role="tabpanel"
+                                        aria-labelledby="side-headingThree">
+                                        <div class="panel-body">
+                                            <ul class="ul-reset">
+                                                <li class="wt-relatedtopic">
+                                                    <Taxonomy:taxonomyfieldcontrol ID="W365_RelatedTopic_Field" runat="server"
+                                                        FieldName="W365_RelatedTopic" />
+                                                </li>
+                                                <li class="wt-relatedtopic">
+                                                    <Taxonomy:taxonomyfieldcontrol FieldName="6b91675d-20b9-41b7-babf-5e198ee4ef48"
+                                                        runat="server" />
+                                                </li>
+                                                <li>
+                                                    <SharepointWebControls:booleanfield ID="W365_HideRelatedDocuments_Field"
+                                                        runat="server" FieldName="W365_HideRelatedDocuments" />
+                                                </li>
+                                                <li>
+                                                    <SharepointWebControls:booleanfield ID="W365_HideRelatedNews_Field"
+                                                        runat="server" FieldName="W365_HideRelatedNews" />
+                                                </li>
+                                                <li>
+                                                    <SharepointWebControls:booleanfield ID="W365_HideRelatedPages_Field"
+                                                        runat="server" FieldName="W365_HideRelatedPages" />
+                                                </li>
+                                                <li>
+                                                    <SharepointWebControls:booleanfield ID="W365_HideRelatedPeople_Field"
+                                                        runat="server" FieldName="W365_HideRelatedPeople" />
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading" role="tab" id="side-headingFour">
+                                        <h4 class="panel-title">
+                                            <a class="collapsed" ng-click="panels[3].isOpen = !panels[3].isOpen"
+                                                data-toggle="collapse" href="#side-collapseFour" aria-expanded="false"
+                                                aria-controls="collapseFour">
+                                                <div class="wt-controlpanel-item-title">
+                                                    <span class="ms-Icon ms-Icon--AnalyticsQuery editPanelTopAlignment"
+                                                        aria-hidden="true"></span>
+                                                    <span>{{"Targeting" | translate}}</span><i class="pull-right ms-Icon editPanelTopAlignment"
+                                                        ng-class="{'ms-Icon--ChevronDown': panels[3].isOpen, 
+														'ms-Icon--ChevronRight': !panels[3].isOpen}"></i></div>
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="side-collapseFour" class="panel-collapse collapse" role="tabpanel"
+                                        aria-labelledby="side-headingFour">
+                                        <div class="panel-body">
+                                            <ul class="ul-reset">
+                                                <li class="wt-relatedtopic">
+                                                    <Taxonomy:taxonomyfieldcontrol ID="W365_Language_Field" runat="server"
+                                                        FieldName="W365_Language" />
+                                                </li>
+                                                <li class="wt-relatedtopic">
+                                                    <Taxonomy:taxonomyfieldcontrol ID="W365_Departments_Field" runat="server"
+                                                        FieldName="W365_Departments" />
+                                                </li>
+                                                <li class="wt-relatedtopic">
+                                                    <Taxonomy:taxonomyfieldcontrol ID="W365_Locations_Field" runat="server"
+                                                        FieldName="W365_Locations" />
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </PublishingWebControls:EditModePanel>
+                    <!-- End Wizdom Pagesettings -->
+                    <div class="bootstrap-wrapper ms-webpart-chrome
+            wizdom-pageInfo wizdom-right-column-container
+            text-center ms-webpartzone-cell">
+                        <div class="ms-webpart-chrome-title">
+                            <span>
+                                <h2 style="text-align: justify;" class="ms-webpart-titletext">
+                                    <nobr>How to Use</nobr></h2>
+                            </span>
+                        </div>
+                        <div class="ms-wpContentDivSpace">
+                            <div class="ms-WPBody wizdom-pageInfo-container">This content is for responsible use. <a target="_blank" href="/sites/positions/Pages/How-to-Use.aspx">Read
+                                    More</a></div>
+                            <div class="ms-clear">
+                            </div>
+                        </div>
+                        <style type="text/css">
+                            @media print {
+                                a[href]:after {
+                                    content: none !important;
+                                }
+
+                                .wt-shadow {
+                                    padding-top: 25px !important;
+                                }
+
+                                .translation-panel .translation-btn {
+                                    display: none !important;
+                                }
+                            }
+                        </style>
+                    </div>
+                    <!--<div id="pagecontact_plc" class="wt-pagecontrol" wizdom365-pagecontact></div>-->
+                    <div class="bootstrap-wrapper ms-webpart-chrome ms-webpartzone-cell" class="is-hidden">
+                        <div class="ms-webpart-chrome-title">
+                            <h2 style="text-align:justify;" class="ms-webpart-titletext">
+                                <nobr><span>CATEGORIES</span></nobr></h2>
+                        </div>
+                        <div class="ms-wpContentDivSpace">
+                            <div class="ms-WPBody">
+                                <ul class="nav nav-pills tags catagories" role="tablist">
+                                </ul>
+                            </div>
+                            <div class="ms-clear"></div>
+                        </div>
+                    </div>
+                    <div class="wt-pagecontrol" wizdom365-pagetags></div>
+                    <div id="relations_plc" class="wt-pagecontrol" wizdom365-relations></div>
+                    <div class="bootstrap-wrapper ms-webpart-chrome
+            wizdom-pageInfo wizdom-right-column-container
+            text-center ms-webpartzone-cell">
+                        <div class="ms-webpart-chrome-title">
+                            <span>
+                                <h2 style="text-align: justify;" class="ms-webpart-titletext">
+                                    <nobr>A-Z Index</nobr></h2>
+                            </span>
+                        </div>
+                        <div class="ms-wpContentDivSpace">
+                            <div class="ms-WPBody wizdom-pageInfo-container">
+                                <a target="_blank" href="/sites/positions/Pages/A-Z.aspx">Search for topic names.</a></div>
+                            <div class="ms-clear">
+                            </div>
+                        </div>
+                        <style type="text/css">
+                            @media print {
+                                a[href]:after {
+                                    content: none !important;
+                                }
+
+                                .wt-shadow {
+                                    padding-top: 25px !important;
+                                }
+
+                                .translation-panel .translation-btn {
+                                    display: none !important;
+                                }
+                            }
+                        </style>
+                    </div>
+                    <br />
+                </div>
+            </div>
+        </div>
+
+        <PublishingWebControls:editmodepanel ID="SpellCheckEditModePanel" runat="server">
+            <script type="text/javascript">
+                window.onload = function () {
+                    function wizdomExcludeFromSpellcheck(divId) {
+                        try {
+                            var a = document.getElementById(divId);
+                            var b = a.getElementsByTagName('input');
+                            for (var i = 0; i < b.length; i++) {
+                                b[i].setAttribute("excludeFromSpellCheck", "true");
+                            }
+
+                            var c = a.getElementsByTagName('textarea');
+                            for (var i = 0; i < c.length; i++) {
+                                c[i].setAttribute("excludeFromSpellCheck", "true");
+                            }
+                        } catch (error) {
+
+                        }
+                    }
+
+                    wizdomExcludeFromSpellcheck("wizsettingsctrl");
+                    wizdomExcludeFromSpellcheck("helppanelCntdiv");
+
+                    if (!wizdomPageColumns.pageInstanceId) {
+                        var instanceIdInput = $("#instanceIdWrapper").find("input");
+                        var spPageContextInfo = window["_spPageContextInfo"];
+                        if (instanceIdInput && spPageContextInfo) {
+                            instanceIdInput[0].value = spPageContextInfo.pageItemId + spPageContextInfo.pageListId;
+                        }
+                    }
+                    setTimeout(function () {
+                        var inDesignMode = document.forms[MSOWebPartPageFormName].MSOLayout_InDesignMode.value;
+                        if (inDesignMode == "1") {
+                            var checkCollection = document.getElementsByClassName('hidden-checkbox');
+                            for (var i = 0; i < checkCollection.length; i += 1) {
+                                checkCollection[i].style.display = 'block';
+                            }
+                        }
+                    }, 300);
+
+                }
+            </script>
+        </PublishingWebControls:EditModePanel>
+        <script type="text/javascript">
+
+            $(document).ready(function(){
+                ExecuteOrDelayUntilScriptLoaded(function () {
+                    IsCurrentUserMemberOfGroup('Restricted Access Viewers', function (userInGroup) {
+                        var inDesignMode = document.forms[MSOWebPartPageFormName].MSOLayout_InDesignMode
+                            .value;
+                        if (inDesignMode !== "1") {
+
+                            var fields = [];
+                            if (userInGroup) {
+                                fields = $('#accordion .panel').find('.ms-rtestate-field');
+                            } else {
+                                fields = $('#accordion .panel:not(.restricted-access)').find('.ms-rtestate-field');
+                            }
+
+                            for (var i = 0; i < fields.length; i++) {
+                                if (fields[i].innerHTML.length > 0) {
+                                    $(fields[i]).closest('.panel').show();
+                                    $(fields[i]).closest('.well').show();
+                                }
+                            }
+
+                            $('#news-pannel').closest('.well').show()
+                            $('#news-pannel').show();
+
+                            if(getParameterByName('isNews') == '1'){
+                                $('#collapseEleven').collapse('show');
+                                setTimeout(function(){
+                                    document.getElementById('collapseEleven').scrollIntoView({
+                                        behavior: 'smooth'
+                                    });
+                                },250);
+                            } else {
+                                $('#collapseOne').collapse('show');
+                            }
+                        } else {
+                            $('.well').show();
+                            $('.panel').show();
+                            if (!userInGroup) {
+                                $('.restricted-access').hide();
+                            }
+                        }
+                    });
+                    IsCurrentUserMemberOfGroup('Syngenta Positions Owners', function (userInGroup) {
+                        if(userInGroup){
+                            $('.emailer').show();
+                        }
+                    });
+                    getCurrentListItem(
+                        function (listItem) {
+                            var catagories = listItem.get_item('Positions_x0020_Catagories');
+                            populateCatagories(catagories._Child_Items_)
+
+                            var contacts = listItem.get_item('Position_x0020_Contacts');
+                            populateContacts(contacts);
+                        },
+                        function (sender, args) {
+                            console.log(args.get_message());
+                        }
+                    );
+
+                    if ($('.subscribe-button').length > 0) {
+                        getSubscription().then(function (data) {
+                            if (data.d.results.length > 0) {
+                                var Id = data.d.results[0].Id;
+                                $(".subscribe-button").text('Unsubscribe');
+                                $(".subscribe-button").click(function () {
+                                    deleteSubscription(Id);
+                                });
+                            } else {
+                                $(".subscribe-button").click(setSubcription);
+                            }
+                        }, function (error) {
+                            console.log(error);
+                        })
+                    }
+                }, 'sp.js');
+            });
+
+            window.onload = function () {
+
+                $("#expand-button").click(function () {
+                    $('#accordion .collapse').collapse('show');
+                    $("#expand-button").hide();
+                    $("#collapse-button").show();
+                });
+
+                $("#collapse-button").click(function () {
+                    $('#accordion .collapse').collapse('hide');
+                    $("#collapse-button").hide();
+                    $("#expand-button").show();
+                });
+
+                $('.collapse').on('shown.bs.collapse', function () {
+                    $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass(
+                        "glyphicon-minus");
+                }).on('hidden.bs.collapse', function () {
+                    $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass(
+                        "glyphicon-plus");
+                });
+                
+
+                $('[data-toggle="tooltip"]').tooltip(); 
+            }
+
+            var convertDate = function(usDate) {
+                var dateParts = usDate.split(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+                return dateParts[3] + "-" + dateParts[1] + "-" + dateParts[2];
+            }
+            var lastReviewDate = $(".lastReviewDate").text();
+            
+            $(".lastReviewDate").text(convertDate(lastReviewDate));
+
+            function IsCurrentUserMemberOfGroup(groupName, OnComplete) {
+
+                var currentContext = new SP.ClientContext.get_current();
+                var currentWeb = currentContext.get_web();
+
+                var currentUser = currentContext.get_web().get_currentUser();
+                currentContext.load(currentUser);
+
+                var allGroups = currentWeb.get_siteGroups();
+                currentContext.load(allGroups);
+
+                var group = allGroups.getByName(groupName);
+                currentContext.load(group);
+
+                var groupUsers = group.get_users();
+                currentContext.load(groupUsers);
+
+                currentContext.executeQueryAsync(OnSuccess, OnFailure);
+
+                function OnSuccess(sender, args) {
+                    var userInGroup = false;
+                    var groupUserEnumerator = groupUsers.getEnumerator();
+                    while (groupUserEnumerator.moveNext()) {
+                        var groupUser = groupUserEnumerator.get_current();
+                        if (groupUser.get_id() == currentUser.get_id()) {
+                            userInGroup = true;
+                            break;
+                        }
+                    }
+                    OnComplete(userInGroup);
+                }
+
+                function OnFailure(sender, args) {
+                    OnComplete(false);
+                }
+            }
+
+            function getParameterByName(name, url) {
+                if (!url) url = window.location.href;
+                name = name.replace(/[\[\]]/g, '\\$&');
+                var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                    results = regex.exec(url);
+                if (!results) return null;
+                if (!results[2]) return '';
+                return decodeURIComponent(results[2].replace(/\+/g, ' '));
+            }
+
+            function getSubscription() {
+
+                var siteurl = _spPageContextInfo.siteAbsoluteUrl;
+                return $.ajax({
+                    url: siteurl + "/_api/lists/getbytitle('Subscriptions')/items?$filter=UserID eq " +
+                        _spPageContextInfo.userId + " and PageID eq " + _spPageContextInfo.pageItemId,
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/json; odata=verbose"
+                    }
+                });
+            }
+
+            function setSubcription() {
+                var data = {
+                    __metadata: {
+                        'type': 'SP.Data.SubscriptionsListItem'
+                    },
+                    Title: _spPageContextInfo.userEmail,
+                    UserID: _spPageContextInfo.userId,
+                    UserName: _spPageContextInfo.userDisplayName,
+                    PageID: _spPageContextInfo.pageItemId,
+                    PageURL: window.location.pathname
+                };
+                var siteurl = _spPageContextInfo.siteAbsoluteUrl;
+                return $.ajax({
+                    url: siteurl + "/_api/lists/getbytitle('Subscriptions')/items",
+                    method: "POST",
+                    data: JSON.stringify(data),
+                    headers: {
+                        "Accept": "application/json; odata=verbose",
+                        "X-RequestDigest": $("#__REQUESTDIGEST").val(),
+                        "content-Type": "application/json;odata=verbose"
+                    },
+                    success: function (data) {
+                        var Id = data.d.Id
+                        alert('Subscribed!');
+                        $(".subscribe-button").off("click");
+                        $(".subscribe-button").text('Unsubscribe');
+                        $(".subscribe-button").click(function () {
+                            deleteSubscription(Id);
+                        });
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+
+                });
+            }
+
+            function deleteSubscription(Id) {
+                var siteurl = _spPageContextInfo.siteAbsoluteUrl;
+                $.ajax({
+                    url: siteurl + "/_api/lists/GetByTitle('Subscriptions')/items(" + Id + ")",
+                    method: "POST",
+                    headers: {
+                        "accept": "application/json;odata=verbose",
+                        "content-type": "application/json;odata=verbose",
+                        "X-RequestDigest": $("#__REQUESTDIGEST").val(),
+                        "IF-MATCH": "*",
+                        "X-HTTP-Method": "DELETE"
+                    },
+                    success: function (data) {
+                        alert('Unsubscribed');
+                        $(".subscribe-button").off("click");
+                        $(".subscribe-button").click(setSubcription);
+                        $(".subscribe-button").html(
+                            '<span style="color:white; padding-right:5px" class="glyphicon glyphicon-heart" aria-hidden="true"></span> Subscribe'
+                        );
+                    },
+                    error: function (error) {
+                        console.log(JSON.stringify(error));
+                    }
+
+                });
+            }
+
+            function getCurrentListItem(success, error) {
+                var context = SP.ClientContext.get_current();
+                var web = context.get_web();
+                var currentList = web.get_lists().getById(_spPageContextInfo.pageListId);
+                var currentListItem = currentList.getItemById(_spPageContextInfo.pageItemId);
+                context.load(currentListItem, "Positions_x0020_Catagories", "Position_x0020_Contacts");
+                context.executeQueryAsync(
+                    function () {
+                        success(currentListItem);
+                    },
+                    error
+                );
+            }
+
+            function getPageName(name) {
+                return name.replace(/[^ 0-9a-zA-Z]/g, '').replace(/\s\s/g, '-').replace(/\s/g, '-') + '.aspx';
+            }
+
+            function populateCatagories(catagories) {
+                var html = '';
+                console.log(catagories);
+                for (var i = 0; i < catagories.length; i += 1) {
+                    html +=
+                        '<li class="animated fadeIn" role="presentation" ><a target="_blank" href="/sites/positions/Pages/' +
+                        getPageName(catagories[i].Label) + '" title="' +
+                        catagories[i].Label + '">' + catagories[i].Label + '</a></li>'
+                }
+                $('.catagories').html(html);
+            }
+
+            function populateContacts(contacts) {
+                var context = SP.ClientContext.get_current();
+                var userArray = [];
+                for (var i = 0; i < contacts.length; i++) {
+                    var user = context.get_web().ensureUser(contacts[i].get_lookupValue());
+                    context.load(user);
+                    userArray.push(user);
+                }
+                context.executeQueryAsync(
+                    function () {
+                        var htmlrow = '';
+                        for (var i = 0; i < userArray.length; i++) {
+                            var email = userArray[i].get_email();
+                            var emailBody = encodeURI('Page URL : ' + window.location.href);
+                            var login = userArray[i].get_loginName();
+                            var displayName = userArray[i].get_title();
+                            htmlrow += '<div class="animated fadeIn wizdom-pageInfo-row"> ' +
+                                '<div class="wizdom-pageInfo-imgColumn">' +
+                                '<div class="avatar-frame">' +
+                                '<img src="https://syngenta.sharepoint.com/sites/positions/_layouts/15/userphoto.aspx?size=M&amp;username=' +
+                                login.split('|')[2] + '" alt="' + email + '" data-themekey="#">' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="wizdom-pageInfo-textColumn">' +
+                                '<div class="name notranslate">' +
+                                '<a href="https://syngenta-my.sharepoint.com/_layouts/15/me.aspx/?p=' + login.split(
+                                    '|')[2] + '&v=work" title="' + displayName + '">' + displayName + '</a>' +
+                                '</div>' +
+                                '<div class="email notranslate">' +
+                                '<a href="mailto:' + email +
+                                '?subject=Syngenta Positions Site&cc=ourpointofview@syngenta.com&body="' +
+                                emailBody + '>' + email + '</a>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '<br/>';
+                        }
+                        $('.positions-contacts').html(htmlrow);
+
+                    },
+                    function (sender, args) { // on error
+                        alert(args.get_message());
+                    }
+
+                );
+            }
+        </script>
+</asp:Content>
