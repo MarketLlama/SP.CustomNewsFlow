@@ -11,7 +11,11 @@ import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Spinner, SpinnerSize, Checkbox } from 'office-ui-fabric-react';
 import { Logger, LogLevel } from '@pnp/logging';
 import CustomNews from './CustomNews';
-
+import { EditorState, convertToRaw } from 'draft-js';
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import draftToHtml from 'draftjs-to-html';
+import htmlToDraft from 'html-to-draftjs';
 
 const DayPickerStrings: IDatePickerStrings = {
   months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -47,6 +51,7 @@ export interface CreateNewsState {
     newsTeaser : string;
     newsContent : string;
     newsDate? : Date | null;
+    editorState : EditorState;
 }
 
 export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNewsState> {
@@ -65,7 +70,8 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
         page : {},
         firstDayOfWeek: DayOfWeek.Sunday,
         loading : false,
-        showModal : false
+        showModal : false,
+        editorState : EditorState.createEmpty()
     };
   }
 
@@ -129,11 +135,19 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
             <p>
               News Teaser
               </p>
-            <TextField required={true} onChanged={(value) => this.setState({ newsTeaser: value })} multiline rows={6} />
+            <TextField required={true} onChanged={(value) => this.setState({ newsTeaser: value })} multiline rows={2} />
             <p>
               News Content
               </p>
-            <TextField required={true} onChanged={(value) => this.setState({ newsContent: value })} multiline rows={6} />
+            <div style= {{boxSizing: 'border-box',border: '1px solid #c2c2c2',padding: '10px'}}>
+              <Editor
+                  editorState={this.state.editorState}
+                  toolbarClassName="toolbarClassName"
+                  wrapperClassName="wrapperClassName"
+                  editorClassName="editorClassName"
+                  onEditorStateChange={(value) => this.setState({ editorState: value })}
+                />
+            </div>
             <br />
             <div className="ms-Grid" dir="ltr">
               <div className="ms-Grid-row">
@@ -166,7 +180,7 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
                 iconProps={{ iconName: 'Add' }}
                 text="Create News"
                 onClick={this._createNews}
-                style={{ float: "right" }}
+                style={{ float: "right" , padding :'10px'}}
               />
             </div>
             <Spinner hidden={this.state.loading == false} size={SpinnerSize.large} style={{ float: "right" }} />
@@ -210,7 +224,7 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
       Title: this.state.newsHeadline,
       NewsDate : this.state.newsDate,
       NewsTeaser : this.state.newsTeaser,
-      NewsContent : this.state.newsContent,
+      NewsContent : draftToHtml(convertToRaw(this.state.editorState.getCurrentContent())),
       TopNews : this.state.topNews,
       ShowImage : this.state.showImage,
       HighlightNews : this.state.highlightedNews,

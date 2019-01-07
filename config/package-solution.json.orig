@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "sp-custom-news-client-side-solution",
+    "id": "93a9364e-a7d4-40c8-8b66-810c1f395911",
+    "version": "1.0.0.3",
+    "includeClientSideAssets": true
+  },
+  "paths": {
+    "zippedPackage": "solution/sp-custom-news.sppkg"
+  }
+}

@@ -35,7 +35,7 @@ export default class CustomNews extends React.Component<ICustomNewsProps, ICusto
       const web = new Web(this.props.context.pageContext.site.absoluteUrl + '/articles');
 
       web.lists.getByTitle('News').items
-        .select("Title", "NewsDate", "NewsTeaser", "NewsImage", "TopNews", "HighlightNews", "ShowImage", "Page/ID").orderBy('Created')
+        .select("Title", "NewsDate", "NewsTeaser", "NewsImage", "TopNews", "HighlightNews", "ShowImage", "Page/ID").orderBy('NewsDate', true)
         .expand("Page").top(20).get().then(items =>{
 
         let promises = [];
