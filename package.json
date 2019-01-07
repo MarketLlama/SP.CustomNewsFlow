@@ -16,14 +16,18 @@
     "@microsoft/sp-office-ui-fabric-core": "1.7.1",
     "@microsoft/sp-webpart-base": "1.7.1",
     "@pnp/pnpjs": "^1.2.7",
+    "@pnp/polyfill-ie11": "^1.0.0",
     "@pnp/spfx-controls-react": "1.11.0",
     "@types/es6-promise": "0.0.33",
     "@types/react": "16.4.2",
     "@types/react-dom": "16.0.5",
     "@types/webpack-env": "1.13.1",
+    "core-js": "^2.6.1",
+    "es6-map": "^0.1.5",
     "react": "16.3.2",
     "react-dom": "16.3.2",
-    "react-moment": "^0.8.4"
+    "react-moment": "^0.8.4",
+    "whatwg-fetch": "^3.0.0"
   },
   "resolutions": {
     "@types/react": "16.4.2"
