@@ -35,14 +35,14 @@ export default class CustomNews extends React.Component<ICustomNewsProps, ICusto
       const web = new Web(this.props.context.pageContext.site.absoluteUrl + '/articles');
 
       web.lists.getByTitle('News').items
-        .select("Title", "NewsDate", "NewsTeaser", "NewsImage", "TopNews", "HighlightNews", "ShowImage", "Page/ID").orderBy('NewsDate', true)
+        .select("Title", "NewsDate", "NewsTeaser", "NewsImage", "TopNews", "HighlightNews", "ShowImage", "Page/ID").orderBy('NewsDate', false)
         .expand("Page").top(20).get().then(items =>{
 
         let promises = [];
         items.forEach(item => {
-          
-          let htmlValues = new Item(web.lists.getByTitle('Pages').items.getById(item.Page.ID), "FieldValuesAsHtml");
-          let textValue = new  Item(web.lists.getByTitle('Pages').items.getById(item.Page.ID), "FieldValuesAsText");
+          let pageId = item.Page[0].ID;
+          let htmlValues = new Item(web.lists.getByTitle('Pages').items.getById(pageId), "FieldValuesAsHtml");
+          let textValue = new  Item(web.lists.getByTitle('Pages').items.getById(pageId), "FieldValuesAsText");
 
           let imagePromise =  htmlValues.select("PublishingRollupImage").get();
           let fileRefPromise =  textValue.select("FileRef").get();
@@ -80,17 +80,18 @@ export default class CustomNews extends React.Component<ICustomNewsProps, ICusto
             } else {
               imageSrc = item.item.NewsImage;
             }
-
+            let pageId = item.item.Page[0].ID;
             newsItems.push({
               Title : item.item.Title,
               NewsDate : item.item.NewsDate,
-              PageId : item.item.Page.ID,
+              PageId : pageId,
               PageURL : item.file,
               NewsTeaser : item.item.NewsTeaser,
               ImgageURL : imageSrc,
               HighlightNews : item.item.HighlightNews,
               ShowImage : item.item.ShowImage
             });
+
           });
           resolve(newsItems);
         });
@@ -142,7 +143,7 @@ export default class CustomNews extends React.Component<ICustomNewsProps, ICusto
         <div className={(item.HighlightNews? styles["alt-txt"] : styles.txt)} >
           <a href={item.PageURL + '?isNews=1'}><h2>{item.Title}</h2></a>
           <div className={styles["newsLatest-date"]}>
-              <b><Moment format="DD/MM/YYYY">{item.NewsDate}</Moment></b>
+              <b><Moment format="YYYY-MM-DD">{item.NewsDate}</Moment></b>
           </div>
           <div className={styles["newsLatest-summary"]} >
               {item.NewsTeaser}

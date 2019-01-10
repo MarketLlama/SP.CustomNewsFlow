@@ -3,7 +3,7 @@
   "solution": {
     "name": "sp-custom-news-client-side-solution",
     "id": "93a9364e-a7d4-40c8-8b66-810c1f395911",
-    "version": "1.0.0.3",
+    "version": "1.0.0.5",
     "includeClientSideAssets": true
   },
   "paths": {

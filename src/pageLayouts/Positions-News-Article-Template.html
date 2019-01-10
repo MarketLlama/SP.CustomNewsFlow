@@ -159,11 +159,17 @@
             box-shadow: none !important;
         }
         /* Not Mobile */
-        @media (min-width: 768px){}
-
+        @media (min-width: 800px){
+            .panel-group {
+                width:105%;
+            }
             .wt-newsContentArea{
+                padding-top: 2em;
+            }
+            /*.wt-newsContentArea{
                 padding-right : 20px !important;
             }
+            */
         }
     </style>
 
@@ -365,7 +371,7 @@
 
                                     <div class="wt-news-content">
                                         <div style="padding-bottom:10px" class="row">
-                                            <h4 style="float: left;padding-left: 15px;">Last Review :<span class="lastReviewDate">
+                                            <h4 style="float: left;padding-left: 15px;">Last Review: <span class="lastReviewDate">
 											<SharePointWebControls:datetimefield FieldName="b2cb531e-fac9-4a85-9705-f1423a56d265"
                                                     runat="server"/></span>
                                             </h4>

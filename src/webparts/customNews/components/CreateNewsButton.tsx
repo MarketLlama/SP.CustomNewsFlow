@@ -40,7 +40,7 @@ export interface CreateNewsProps {
 
 export interface CreateNewsState {
     showModal : boolean;
-    page : any;
+    page : any[];
     firstDayOfWeek?: DayOfWeek;
     imageFile : File;
     loading : boolean;
@@ -67,7 +67,7 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
         topNews : false,
         showImage : false,
         highlightedNews : false,
-        page : {},
+        page : [],
         firstDayOfWeek: DayOfWeek.Sunday,
         loading : false,
         showModal : false,
@@ -107,7 +107,7 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
                   </p>
                   <ListItemPicker listId='8A4FB100-19E4-43F0-9CC8-10D9FFCF4BCA'
                     columnInternalName='Title'
-                    itemLimit={1}
+                    itemLimit={5}
                     onSelectedItem={this._onSelectedItem}
                     context={this.props.context} 
                     webUrl = {webUrl}/>
@@ -196,11 +196,10 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
     });
   }
 
-
   private _onSelectedItem =(data: { key: string; name: string }[]) =>{
     console.log(data);
     this.setState({
-      page : data[0]
+      page : data
     });
   }
 
@@ -220,6 +219,10 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
   
   private _createNews = () : void =>{
     const web = new Web(this.props.context.pageContext.site.absoluteUrl + '/articles');
+    let pageIds = [];
+    this.state.page.forEach(item =>{
+        pageIds.push(item.key);
+    });
     web.lists.getByTitle("News").items.add({
       Title: this.state.newsHeadline,
       NewsDate : this.state.newsDate,
@@ -228,7 +231,9 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
       TopNews : this.state.topNews,
       ShowImage : this.state.showImage,
       HighlightNews : this.state.highlightedNews,
-      PageId : this.state.page.key
+      PageId :  {
+        results : pageIds
+      }
     }).then(item =>{
       let uploadId = item.data.Id;
       const web = new Web(this.props.context.pageContext.site.absoluteUrl);
