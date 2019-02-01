@@ -158,6 +158,22 @@
             -webkit-box-shadow: none !important;
             box-shadow: none !important;
         }
+
+        .restrictedContentWarning {
+          float:right;
+          font-size: 24px;
+          color: #eb8201 !important;
+          padding-top: 4px;
+        }
+
+        .nav-tabs > li, .nav-pills > li {
+            float:none !important;
+            display:inline-block !important;
+        }
+
+        .nav-tabs, .nav-pills {
+            text-align:center;
+        }
         /* Not Mobile */
         @media (min-width: 800px){
             .panel-group {
@@ -166,10 +182,48 @@
             .wt-newsContentArea{
                 padding-top: 2em;
             }
+            .wt-news-title{
+              display: inherit !important;
+            }
+            .wt-news-title-mobile{
+              padding-top:10px;
+              display: none !important;
+              margin-top: 0 !important;
+            }
+        }
+        /* Mobile */
+        @media (max-width : 790px){
+            .wt-news-title{
+              display: none !important;
+            }
+            .wt-news-title-mobile{
+              padding-top:10px;
+              display:  inline-block !important;
+              margin-top: 0 !important;
+            }
             /*.wt-newsContentArea{
                 padding-right : 20px !important;
             }
             */
+            .row.reorder-xs {
+              -webkit-transform: rotate(180deg);
+              -moz-transform: rotate(180deg);
+              -ms-transform: rotate(180deg);
+              -o-transform: rotate(180deg);
+              transform: rotate(180deg);
+
+              direction: rtl;
+            }
+
+            .row.reorder-xs > [class*="col-"] {
+              -webkit-transform: rotate(-180deg);
+              -moz-transform: rotate(-180deg);
+              -ms-transform: rotate(-180deg);
+              -o-transform: rotate(-180deg);
+              transform: rotate(-180deg);
+
+              direction: ltr;
+            }
         }
     </style>
 
@@ -211,7 +265,7 @@
     <!-- moved to globalResource.js -->
     <!-- end moved from wizdoms masterpage-->
     <script type="text/template" id="pageColumns">
-        <%-- 
+        <%--
 			Dont change position!
 			Its index based in script that iterates through the values in scriptloader.js
 			Always add to the bottom if needed
@@ -283,7 +337,7 @@
                                     <a href="/sites/positions/Pages/Responsible-Agriculture.aspx">Responsible Agriculture</a></li>
                                 <li>
                                     <a href="/sites/positions/Pages/Environment.aspx">Environment</a></li>
-                            </ul>  
+                            </ul>
                         </nav>
                     </div>
                     <PublishingWebControls:richimagefield ID="NewsImageField" runat="server" FieldName="PublishingRollupImage"/>
@@ -295,7 +349,7 @@
 
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row reorder-xs">
                             <div class="col-xs-12 col-sm-3">
                                 <div style="text-align: center;" wizdom365-item-social-container itemid="socialId"
                                     itemtype="corporateNews" item="item" tooltipposition="top" ng-if="socialFeatureEnabled && socialEnabledOnItem">
@@ -353,6 +407,7 @@
                             </div>
                             <div class="col-xs-12 col-sm-9">
                                 <div class="wt-newsContentArea">
+
                                     <button id="collapse-button" style="margin-left: 40px;display:none;float:right" data-toggle="tooltip" title="Collapse All"
                                         type="button" class="btn btn-default">
                                         <span class="glyphicon glyphicon-resize-small"></span>
@@ -361,11 +416,16 @@
                                         class="btn btn-default">
                                         <span class="glyphicon glyphicon-resize-full"></span>
                                     </button>
-                                    <div style="float: right;" class="wt-page-translation" data-toggle="tooltip" data-html="true" 
+                                    <div style="float: right; margin-left: 40px;" class="wt-page-translation" data-toggle="tooltip" data-html="true"
                                         title="Select a language for machine translation. <i>Note that only the English version has been reviewed and approved.</i>" wizdom365-pagetranslation ui="true"></div>
+                                    <span class="glyphicon glyphicon-warning-sign restrictedContentWarning" style="display:none"
+                                      title="Restricted Use Content is available at the end of the page" data-toggle="tooltip"></span>
                                     <h1 class="wt-news-title">
                                         <SharePointWebControls:textfield ID="TextField1" runat="server" FieldName="Title"/>
                                     </h1>
+                                    <h3 class="wt-news-title-mobile">
+                                        <SharePointWebControls:textfield ID="TextField2" runat="server" FieldName="Title"/>
+                                    </h3>
                                     <PublishingWebControls:editmodepanel runat="server" ID="EditModePanelNewsDate">
                                         <SharePointWebControls:datetimefield ID="NewsDateField" runat="server"
                                             FieldName="W365_NewsDate" />
@@ -581,7 +641,8 @@
                                                             </div>
                                                         </div>
                                                     </div>
-
+                                                </div>
+                                                <div class="animated fadeIn well"><h4>Restricted use content</h4>
                                                     <div style="display:none" class="panel panel-default animated fadeIn restricted-access">
                                                         <div>
                                                             <div class="panel-heading" role="tab" id="headingThriteen">
@@ -629,7 +690,7 @@
                                                                     <a class="collapsed" role="button" data-toggle="collapse"
                                                                         data-parent="#accordion" href="#collapseFithteen"
                                                                         aria-expanded="false" aria-controls="collapseThree">
-                                                                        <i class="more-less glyphicon glyphicon-plus"></i>Restricted Use Q&A</a>
+                                                                        <i class="more-less glyphicon glyphicon-plus"></i>Q&A For Experts</a>
                                                                 </h4>
                                                             </div>
                                                             <div id="collapseFithteen" class="panel-collapse collapse" role="tabpanel"
@@ -753,7 +814,7 @@
                                                     <span class="ms-Icon ms-Icon--Contact editPanelTopAlignment"
                                                         aria-hidden="true"></span>
                                                     <span>{{"Contact settings" | translate}}</span><i class="pull-right ms-Icon editPanelTopAlignment"
-                                                        ng-class="{'ms-Icon--ChevronDown': panels[1].isOpen, 
+                                                        ng-class="{'ms-Icon--ChevronDown': panels[1].isOpen,
 															  'ms-Icon--ChevronRight': !panels[1].isOpen}"></i></div>
                                             </a>
                                         </h4>
@@ -793,7 +854,7 @@
                                                 <div class="wt-controlpanel-item-title">
                                                     <span class="ms-Icon ms-Icon--BuildQueue editPanelTopAlignment"aria-hidden="true"></span>
                                                     <span>{{"Related Content" | translate}}</span><i class="pull-right ms-Icon editPanelTopAlignment"
-                                                        ng-class="{'ms-Icon--ChevronDown': panels[2].isOpen, 
+                                                        ng-class="{'ms-Icon--ChevronDown': panels[2].isOpen,
 															  'ms-Icon--ChevronRight': !panels[2].isOpen}"></i></div>
                                             </a>
                                         </h4>
@@ -840,7 +901,7 @@
                                                     <span class="ms-Icon ms-Icon--AnalyticsQuery editPanelTopAlignment"
                                                         aria-hidden="true"></span>
                                                     <span>{{"Targeting" | translate}}</span><i class="pull-right ms-Icon editPanelTopAlignment"
-                                                        ng-class="{'ms-Icon--ChevronDown': panels[3].isOpen, 
+                                                        ng-class="{'ms-Icon--ChevronDown': panels[3].isOpen,
 														'ms-Icon--ChevronRight': !panels[3].isOpen}"></i></div>
                                             </a>
                                         </h4>
@@ -1007,6 +1068,7 @@
                             var fields = [];
                             if (userInGroup) {
                                 fields = $('#accordion .panel').find('.ms-rtestate-field');
+                                $('.restrictedContentWarning').show();
                             } else {
                                 fields = $('#accordion .panel:not(.restricted-access)').find('.ms-rtestate-field');
                             }
@@ -1096,9 +1158,9 @@
                     $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass(
                         "glyphicon-plus");
                 });
-                
 
-                $('[data-toggle="tooltip"]').tooltip(); 
+
+                $('[data-toggle="tooltip"]').tooltip();
             }
 
             var convertDate = function(usDate) {
@@ -1106,7 +1168,7 @@
                 return dateParts[3] + "-" + dateParts[1] + "-" + dateParts[2];
             }
             var lastReviewDate = $(".lastReviewDate").text();
-            
+
             $(".lastReviewDate").text(convertDate(lastReviewDate));
 
             function IsCurrentUserMemberOfGroup(groupName, OnComplete) {
