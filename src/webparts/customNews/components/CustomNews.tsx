@@ -30,7 +30,7 @@ export default class CustomNews extends React.Component<ICustomNewsProps, ICusto
   }
 
   private _getAllNews = async () : Promise<newsItem[]> =>{
-    return new Promise<newsItem[]>((resolve, reject) =>{ 
+    return new Promise<newsItem[]>((resolve, reject) =>{
       let newsItems : newsItem[] = [];
       const web = new Web(this.props.context.pageContext.site.absoluteUrl + '/articles');
 
@@ -58,10 +58,10 @@ export default class CustomNews extends React.Component<ICustomNewsProps, ICusto
           });
           promises.push(promise);
         });
-        //TODO: Fix spaghetti code. 
+        //TODO: Fix spaghetti code.
         Promise.all(promises).then(_items =>{
           _items.forEach(item =>{
-            //Get src of publishing image 
+            //Get src of publishing image
             //Mark sure RenditionID is within query string or performace will be shite.
             const image = item.image;
             let imageSrc : string = "";
@@ -76,7 +76,7 @@ export default class CustomNews extends React.Component<ICustomNewsProps, ICusto
                 }
               } else {
                 imageSrc = '';
-              } 
+              }
             } else {
               imageSrc = item.item.NewsImage;
             }
@@ -95,7 +95,7 @@ export default class CustomNews extends React.Component<ICustomNewsProps, ICusto
           });
           resolve(newsItems);
         });
-        
+
       }, _error =>{
         reject(newsItems);
       });
@@ -126,7 +126,7 @@ export default class CustomNews extends React.Component<ICustomNewsProps, ICusto
     }
     this.setState({
       news : news
-    });  
+    });
   }
 
   public componentDidMount() {
@@ -135,21 +135,21 @@ export default class CustomNews extends React.Component<ICustomNewsProps, ICusto
 
   private _onRenderNewsCell = (item : newsItem) : JSX.Element =>{
     return (
-      <div className={styles.brick + ' animated fadeIn'}>
-        {item.HighlightNews? <span className={styles.feature}>FEATURED</span> : null}
-        {item.ShowImage ? <div style={{backgroundImage: 'url(' + item.ImgageURL + ')'}} 
-          className={styles.img} onClick={() => window.location.href = item.PageURL + '?isNews=1'}>
-        </div> : null}
-        <div className={(item.HighlightNews? styles["alt-txt"] : styles.txt)} >
-          <a href={item.PageURL + '?isNews=1'}><h2>{item.Title}</h2></a>
-          <div className={styles["newsLatest-date"]}>
+      <a href={item.PageURL + '?isNews=1'} style={{textDecoration: 'none',color: 'inherit'}}>
+        <div className={styles.brick + ' animated fadeIn'}>
+          {item.HighlightNews ? <span className={styles.feature}>FEATURED</span> : null}
+          {item.ShowImage ? <div style={{ backgroundImage: 'url(' + item.ImgageURL + ')' }} className={styles.img}/> : null}
+          <div className={(item.HighlightNews ? styles["alt-txt"] : styles.txt)} >
+            <a href={item.PageURL + '?isNews=1'}><h2>{item.Title}</h2></a>
+            <div className={styles["newsLatest-date"]}>
               <b><Moment format="YYYY-MM-DD">{item.NewsDate}</Moment></b>
-          </div>
-          <div className={styles["newsLatest-summary"]} >
+            </div>
+            <div className={styles["newsLatest-summary"]} >
               {item.NewsTeaser}
+            </div>
           </div>
         </div>
-      </div>
+      </a>
     );
   }
 }
