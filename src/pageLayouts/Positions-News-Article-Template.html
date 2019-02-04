@@ -1163,13 +1163,21 @@
                 $('[data-toggle="tooltip"]').tooltip();
             }
 
-            var convertDate = function(usDate) {
-                var dateParts = usDate.split(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-                return dateParts[3] + "-" + dateParts[1] + "-" + dateParts[2];
-            }
-            var lastReviewDate = $(".lastReviewDate").text();
+            //is page not in edit mode
+            var inDesignMode = document.forms[MSOWebPartPageFormName].MSOLayout_InDesignMode
+                                .value;
+            if (inDesignMode !== "1") {
 
-            $(".lastReviewDate").text(convertDate(lastReviewDate));
+                var convertDate = function(usDate) {
+                    var dateParts = usDate.split(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+                    return dateParts[3] + "-" + dateParts[1] + "-" + dateParts[2];
+                }
+                var lastReviewDate = $(".lastReviewDate").text();
+
+                $(".lastReviewDate").text(convertDate(lastReviewDate));
+            } else {
+                $('.lastReviewDate .ms-formfieldlabelcontainer').hide();
+            }
 
             function IsCurrentUserMemberOfGroup(groupName, OnComplete) {
 
@@ -1355,8 +1363,8 @@
                                 '</div>' +
                                 '<div class="email notranslate">' +
                                 '<a href="mailto:' + email +
-                                '?subject=Syngenta Positions Site&cc=ourpointofview@syngenta.com&body="' +
-                                emailBody + '>' + email + '</a>' +
+                                '?subject=Syngenta Positions Site&CC=ourpointofview@syngenta.com&body=' +
+                                emailBody + '">' + email + '</a>' +
                                 '</div>' +
                                 '</div>' +
                                 '</div>' +
