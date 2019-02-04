@@ -70,6 +70,20 @@ export default class CustomNewsWebPart extends BaseClientSideWebPart<ICustomNews
     ReactDom.unmountComponentAtNode(this.domElement);
   }
 
+  protected componentDidMount() {
+    if (location.href.toLocaleLowerCase().indexOf('/news.aspx') > 0 ){
+      var  a = document.getElementById('MSOZoneCell_WebPartWPQ2');
+      a.parentElement.classList.remove("ms-webpart-zone");
+      a.parentElement.classList.remove("ms-fullWidth");
+
+      a.classList.remove("s4-wpcell-plain");
+      a.classList.remove("ms-webpartzone-cell");
+      a.classList.remove("ms-webpart-cell-vertical-inline-table");
+      a.classList.remove("ms-webpart-cell-vertical");
+      a.classList.remove("ms-fullWidth");
+    }
+  }
+
   protected get dataVersion(): Version {
     return Version.parse('1.0');
   }
