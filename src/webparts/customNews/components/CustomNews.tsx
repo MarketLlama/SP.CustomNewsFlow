@@ -78,8 +78,9 @@ export default class CustomNews extends React.Component<ICustomNewsProps, ICusto
                 imageSrc = '';
               }
             } else {
-              imageSrc = item.item.NewsImage;
+              imageSrc = encodeURI(item.item.NewsImage);
             }
+            console.log(imageSrc);
             let pageId = item.item.Page[0].ID;
             newsItems.push({
               Title : item.item.Title,
@@ -108,7 +109,7 @@ export default class CustomNews extends React.Component<ICustomNewsProps, ICusto
         <SecurityTrimmedControl context={this.props.context}
                           level={PermissionLevel.currentWeb}
                           permissions={[SPPermission.approveItems]}>
-          <CreateNewsButton context={this.props.context} parent={this}/>
+          <CreateNewsButton context={this.props.context} getNews={this.createNewsFlow}/>
         </SecurityTrimmedControl>
         <br/>
         <div className={styles.masonry}>

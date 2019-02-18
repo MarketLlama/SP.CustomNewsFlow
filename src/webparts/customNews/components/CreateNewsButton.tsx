@@ -1,21 +1,19 @@
 import * as React from 'react';
 import styles from './CustomNews.module.scss';
-import { escape } from '@microsoft/sp-lodash-subset';
-import pnp, {sp , Web, Site}  from '@pnp/pnpjs';
-import { IWebPartContext } from "@microsoft/sp-webpart-base";
+import pnp, {sp , Web, Site, ItemAddResult, Item, FileAddResult}  from '@pnp/pnpjs';
+import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { Modal } from 'office-ui-fabric-react/lib/Modal';
-import { PrimaryButton, ActionButton } from 'office-ui-fabric-react/lib/Button';
+import { PrimaryButton, ActionButton, DefaultButton } from 'office-ui-fabric-react/lib/Button';
 import { ListItemPicker } from '@pnp/spfx-controls-react';
 import { DatePicker, DayOfWeek, IDatePickerStrings } from 'office-ui-fabric-react/lib/DatePicker';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
-import { Spinner, SpinnerSize, Checkbox } from 'office-ui-fabric-react';
+import { Spinner, SpinnerSize, Checkbox, Panel, PanelType, Icon } from 'office-ui-fabric-react';
 import { Logger, LogLevel } from '@pnp/logging';
 import CustomNews from './CustomNews';
 import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import draftToHtml from 'draftjs-to-html';
-import htmlToDraft from 'html-to-draftjs';
 
 const DayPickerStrings: IDatePickerStrings = {
   months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -34,12 +32,14 @@ const DayPickerStrings: IDatePickerStrings = {
 };
 
 export interface CreateNewsProps {
-    context : IWebPartContext;
-    parent : CustomNews;
+    context : WebPartContext;
+    getNews : Function;
 }
 
 export interface CreateNewsState {
     showModal : boolean;
+    hideError? : boolean;
+    submitDisabled? : boolean;
     page : any[];
     firstDayOfWeek?: DayOfWeek;
     imageFile : File;
@@ -71,6 +71,7 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
         firstDayOfWeek: DayOfWeek.Sunday,
         loading : false,
         showModal : false,
+        hideError : true,
         editorState : EditorState.createEmpty()
     };
   }
@@ -86,70 +87,69 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
           secondaryText="Opens the Sample Modal"
           onClick={this._showModal}
           text="Create News" />
-        <Modal
-          titleAriaId="titleId"
-          subtitleAriaId="subtitleId"
-          isOpen={this.state.showModal}
-          onDismiss={this._closeModal}
-          isBlocking={false}
-          className={styles.modalContainer}
-        >
-          <div className={styles.modalHeader}>
-            <span style={{ padding: "20px" }} id="titleId">Add News</span>
-            <ActionButton className={styles.closeButton} iconProps={{ iconName: 'Cancel' }} onClick={this._closeModal} />
-          </div>
+        <Panel
+            isOpen={this.state.showModal}
+            // tslint:disable-next-line:jsx-no-lambda
+            onDismiss={this._closeModal}
+            type={PanelType.large}
+            headerText="Create a News Article"
+            isFooterAtBottom={true}
+            onRenderFooterContent={this._onRenderFooterContent}
+            className={styles.modalContainer}
+          >
           <div id="subtitleId" className={styles.modalBody}>
             <div className="ms-Grid" dir="ltr">
               <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-sm6 ms-md6 ms-lg6">
-                  <p>
-                    Select Article
-                  </p>
+                <div className="ms-Grid-col ms-sm12 ms-md6 ms-lg6">
+                  <p style={{marginTop: '0.4em',marginBottom: '0.4em'}}>Topic page *</p>
                   <ListItemPicker listId='8A4FB100-19E4-43F0-9CC8-10D9FFCF4BCA'
                     columnInternalName='Title'
                     itemLimit={5}
                     onSelectedItem={this._onSelectedItem}
-                    context={this.props.context} 
+                    context={this.props.context}
                     webUrl = {webUrl}/>
                 </div>
-                <div className="ms-Grid-col ms-sm6 ms-md6 ms-lg6">
-                  <p>
-                    News Date
-                  </p>
+                <div className="ms-Grid-col ms-sm12 ms-md6 ms-lg6">
                   <DatePicker
                     isRequired={true}
                     firstDayOfWeek={firstDayOfWeek}
                     strings={DayPickerStrings}
                     placeholder="Select a date..."
                     ariaLabel="Select a date"
+                    label="News Date"
                     onSelectDate={this._onSelectDate}
                     value={newsDate!}
                   />
                 </div>
               </div>
-            </div>
-            <p>
-              News Headline
-              </p>
-            <TextField required={true} onChanged={(value) => this.setState({ newsHeadline: value })} />
-            <p>
-              News Teaser
-              </p>
-            <TextField required={true} onChanged={(value) => this.setState({ newsTeaser: value })} multiline rows={2} />
-            <p>
-              News Content
-              </p>
-            <div style= {{boxSizing: 'border-box',border: '1px solid #c2c2c2',padding: '10px'}}>
-              <Editor
-                  editorState={this.state.editorState}
-                  toolbarClassName="toolbarClassName"
-                  wrapperClassName="wrapperClassName"
-                  editorClassName="editorClassName"
-                  onEditorStateChange={(value) => this.setState({ editorState: value })}
-                />
-            </div>
-            <br />
-            <div className="ms-Grid" dir="ltr">
+              <br/>
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-col ms-sm12 ms-md12 ms-lg12">
+                  <TextField label="News Headline" required={true} onChanged={(value) => this.setState({ newsHeadline: value })} rows={2}/>
+                </div>
+              </div>
+              <br/>
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-col ms-sm12 ms-md12 ms-lg12">
+                 <TextField label="News Teaser" required={true} onChanged={(value) => this.setState({ newsTeaser: value })} multiline rows={2} />
+                </div>
+              </div>
+              <br/>
+              <div className="ms-Grid-row">
+                <div className="ms-Grid-col ms-sm12 ms-md12 ms-lg12">
+                  <p>News content</p>
+                  <div className={styles.draftEditor}>
+                    <Editor
+                        editorState={this.state.editorState}
+                        toolbarClassName={styles.toolbar}
+                        wrapperClassName={styles.wrapper}
+                        editorClassName={styles.editor}
+                        onEditorStateChange={(value) => this.setState({ editorState: value })}
+                      />
+                  </div>
+                </div>
+              </div>
+              <br/>
               <div className="ms-Grid-row">
                   <div className="ms-Grid-col ms-sm4 ms-md4 ms-lg3">
                     <Checkbox label="Top News" onChange={(value, isChecked) => this.setState({ topNews: isChecked })} />
@@ -174,20 +174,39 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
                 </div>
               </div>
             </div>
-            <br />
-            <div hidden={this.state.loading}>
-              <PrimaryButton
-                iconProps={{ iconName: 'Add' }}
-                text="Create News"
-                onClick={this._createNews}
-                style={{ float: "right" , padding :'10px'}}
-              />
-            </div>
-            <Spinner hidden={this.state.loading == false} size={SpinnerSize.large} style={{ float: "right" }} />
+            {this.state.loading ? <Spinner className={styles.loading} size={SpinnerSize.large} label="loading..." ariaLive="assertive" /> : null}
           </div>
-        </Modal>
+        </Panel>
       </div>
     );
+  }
+
+  private _onRenderFooterContent = (): JSX.Element => {
+    return (
+      <div>
+        <PrimaryButton value="submit" iconProps={{ iconName: 'Add' }} disabled={this.state.submitDisabled}
+          style={{ marginRight: '8px' }} onClick={this._createNews}>Create</PrimaryButton>
+        <DefaultButton onClick={this._closeModal}>Cancel</DefaultButton>
+        <span className={styles.errorMessage} hidden={this.state.hideError}> <Icon iconName="StatusErrorFull" />
+          Please complete all required fields</span>
+      </div>
+    );
+  }
+  private _validation = () : boolean =>{
+    const s = this.state;
+    if(
+      s.page == null || s.page.length == 0||
+      s.newsDate == null ||
+      s.newsHeadline == '' || s.newsHeadline == null ||
+      s.newsTeaser == '' || s.newsTeaser == null
+    ) {
+      this.setState({
+        hideError : false
+      });
+      return false;
+    } else {
+      return true;
+    }
   }
 
   private _onSelectDate = (date: Date | null | undefined)=> {
@@ -197,7 +216,6 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
   }
 
   private _onSelectedItem =(data: { key: string; name: string }[]) =>{
-    console.log(data);
     this.setState({
       page : data
     });
@@ -216,60 +234,67 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
   private _closeModal = (): void => {
     this.setState({ showModal: false });
   }
-  
-  private _createNews = () : void =>{
+
+  private _showLoading = () =>{
+    this.setState({ loading: true });
+  }
+
+  private _hideLoading = () =>{
+    this.setState({ loading: false });
+  }
+
+  private _createNews = async() =>{
+    if(!this._validation()){
+      return;
+    }
+    this._showLoading();
     const web = new Web(this.props.context.pageContext.site.absoluteUrl + '/articles');
     let pageIds = [];
     this.state.page.forEach(item =>{
         pageIds.push(item.key);
     });
-    web.lists.getByTitle("News").items.add({
-      Title: this.state.newsHeadline,
-      NewsDate : this.state.newsDate,
-      NewsTeaser : this.state.newsTeaser,
-      NewsContent : draftToHtml(convertToRaw(this.state.editorState.getCurrentContent())),
-      TopNews : this.state.topNews,
-      ShowImage : this.state.showImage,
-      HighlightNews : this.state.highlightedNews,
-      PageId :  {
-        results : pageIds
-      }
-    }).then(item =>{
-      let uploadId = item.data.Id;
-      const web = new Web(this.props.context.pageContext.site.absoluteUrl);
-        // you can adjust this number to control what size files are uploaded in chunks
-      if(this.state.imageFile != null){
-        if (this.state.imageFile.size <= 10485760) {
-            // small upload
-          web.getFolderByServerRelativeUrl("PublishingImages")
-            .files.add(this.state.imageFile.name, this.state.imageFile, 
-              true).then(_ => {
-                pnp.sp.web.lists.getByTitle("News").items.getById(uploadId).update({
-                  NewsImage: _.data.ServerRelativeUrl,
-              }).then(i => {
-                  this.props.parent.createNewsFlow();
-                  this._closeModal();
-                });
-              });
-        } else {
-            // large upload
-            web.getFolderByServerRelativeUrl("PublishingImages")
-              .files.addChunked(this.state.imageFile.name, this.state.imageFile, data => {
-                Logger.log({ data: data, level: LogLevel.Verbose, message: "progress" });
-            }, true).then(_ => {
-              pnp.sp.web.lists.getByTitle("News").items.getById(uploadId).update({
-                NewsImage: _.data.ServerRelativeUrl,
-            }).then(i => {
-                this.props.parent.createNewsFlow();
-                this._closeModal();
-              });
-            });
+    try{
+      let itemResult: ItemAddResult = await web.lists.getByTitle("News").items.add({
+        Title: this.state.newsHeadline,
+        NewsDate : this.state.newsDate,
+        NewsTeaser : this.state.newsTeaser,
+        NewsContent : draftToHtml(convertToRaw(this.state.editorState.getCurrentContent())),
+        TopNews : this.state.topNews,
+        ShowImage : this.state.showImage,
+        HighlightNews : this.state.highlightedNews,
+        PageId :  {
+          results : pageIds
         }
-      } else {
-        this.props.parent.createNewsFlow();
-        this._closeModal();
+      });
+      let item: Item = itemResult.item;
+      const _web = new Web(this.props.context.pageContext.site.absoluteUrl);
+      if(this.state.imageFile){
+        if (this.state.imageFile.size <= 10485760) {
+          // small upload
+          let fileAddResult : FileAddResult =
+            await _web.getFolderByServerRelativeUrl("PublishingImages").files.add(this.state.imageFile.name, this.state.imageFile, true);
+            console.log(fileAddResult.data.ServerRelativeUrl);
+          item.update({
+              NewsImage: fileAddResult.data.ServerRelativeUrl,
+          });
+        } else {
+          // large upload
+          let fileAddResult : FileAddResult = await _web.getFolderByServerRelativeUrl("PublishingImages").files
+          .addChunked(this.state.imageFile.name, this.state.imageFile, data => {
+              Logger.log({ data: data, level: LogLevel.Verbose, message: "progress" });
+          }, true);
+          console.log(fileAddResult.data.ServerRelativeUrl);
+          item.update({
+            NewsImage: fileAddResult.data.ServerRelativeUrl,
+          });
+        }
       }
-    })
-    .catch(console.log);
+      this._hideLoading();
+      this.props.getNews();
+      this._closeModal();
+    }catch(error) {
+      console.log(error);
+      this._hideLoading();
+    }
   }
 }
