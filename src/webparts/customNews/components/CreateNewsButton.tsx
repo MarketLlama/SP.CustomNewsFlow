@@ -63,9 +63,9 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
         newsHeadline : '',
         newsContent : '',
         newsTeaser : '',
-        newsDate : null,
+        newsDate : new Date(),
         topNews : false,
-        showImage : false,
+        showImage : true,
         highlightedNews : false,
         page : [],
         firstDayOfWeek: DayOfWeek.Sunday,
@@ -158,7 +158,7 @@ export class CreateNewsButton extends React.Component<CreateNewsProps, CreateNew
                     <Checkbox label="Featured News" onChange={(value, isChecked) => this.setState({ highlightedNews: isChecked })} />
                   </div>
                   <div className="ms-Grid-col ms-sm4 ms-md4 ms-lg3">
-                    <Checkbox label="Show Image" onChange={(value, isChecked) => this.setState({ showImage: isChecked })} />
+                    <Checkbox label="Show Image" defaultChecked={true} onChange={(value, isChecked) => this.setState({ showImage: isChecked })} />
                   </div>
               </div>
               <br/>
