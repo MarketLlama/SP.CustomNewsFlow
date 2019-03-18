@@ -7,6 +7,11 @@
 <%-- SharePoint Register tags --%>
 
 <asp:Content ContentPlaceholderID="PlaceHolderAdditionalPageHead" runat="server">
+
+    <script type="text/javascript" src="/_layouts/15/sp.runtime.js"></script>
+    <script type="text/javascript" src="/_layouts/15/sp.js"></script>
+    <script type="text/javascript" src="/_layouts/15/sp.taxonomy.js"></script>
+    <script type="text/javascript" src="/_layouts/15/sp.publishing.js"></script>
     <style type="text/css">
         #sideNavBox {
             display: none;
@@ -124,13 +129,15 @@
             padding-top: 0 !important;
         }
 
-        .catagories>li>a {
+        .catagories>li>a,
+        .keyWords>li>a {
             background-color: #eb8200 !important;
             color: white !important;
             margin: 3px;
         }
 
-        .catagories>li>a:hover {
+        .catagories>li>a:hover,
+        .keyWords>li>a:hover{
             background-color: #1775bc !important;
             color: white;
         }
@@ -943,7 +950,7 @@
                             </span>
                         </div>
                         <div class="ms-wpContentDivSpace">
-                            <div class="ms-WPBody wizdom-pageInfo-container">This content is for responsible use. <a target="_blank" href="/sites/positions/Pages/How-to-Use.aspx">Read
+                            <div class="ms-WPBody wizdom-pageInfo-container">This content is for responsible use. <a href="/sites/positions/Pages/How-to-Use.aspx">Read
                                     More</a></div>
                             <div class="ms-clear">
                             </div>
@@ -978,7 +985,19 @@
                             <div class="ms-clear"></div>
                         </div>
                     </div>
-                    <div class="wt-pagecontrol" wizdom365-pagetags></div>
+                    <div class="bootstrap-wrapper ms-webpart-chrome ms-webpartzone-cell" class="is-hidden">
+                        <div class="ms-webpart-chrome-title">
+                            <h2 style="text-align:justify;" class="ms-webpart-titletext">
+                                <nobr><span>KEY WORDS</span></nobr></h2>
+                        </div>
+                        <div class="ms-wpContentDivSpace">
+                            <div class="ms-WPBody">
+                                <ul class="nav nav-pills tags keyWords" role="tablist">
+                                </ul>
+                            </div>
+                            <div class="ms-clear"></div>
+                        </div>
+                    </div>
                     <div class="bootstrap-wrapper ms-webpart-chrome
             wizdom-pageInfo wizdom-right-column-container
             text-center ms-webpartzone-cell">
@@ -990,7 +1009,7 @@
                         </div>
                         <div class="ms-wpContentDivSpace">
                             <div class="ms-WPBody wizdom-pageInfo-container">
-                                <a target="_blank" href="/sites/positions/Pages/A-Z.aspx">Search for topic names.</a></div>
+                                <a href="/sites/positions/Pages/A-Z.aspx">Search for topic names.</a></div>
                             <div class="ms-clear">
                             </div>
                         </div>
@@ -1053,67 +1072,80 @@
             $(document).ready(function(){
 
                 ExecuteOrDelayUntilScriptLoaded(function () {
-                    IsCurrentUserMemberOfGroup('Restricted Access Viewers', function (userInGroup) {
-                        var inDesignMode = document.forms[MSOWebPartPageFormName].MSOLayout_InDesignMode
-                            .value;
-                        if (inDesignMode !== "1") {
+                  SP.SOD.executeFunc('sp.js', 'SP.ClientContext', function(){
+                  //Load up SP.Publishing
+                    SP.SOD.registerSod('sp.taxonomy.js', SP.Utilities.Utility.getLayoutsPageUrl('sp.taxonomy.js'));
+                    SP.SOD.executeFunc('sp.taxonomy.js','SP.Taxonomy',function(){
 
-                            var fields = [];
-                            if (userInGroup) {
-                                fields = $('#accordion .panel').find('.ms-rtestate-field');
-                            } else {
-                                fields = $('#accordion .panel:not(.restricted-access)').find('.ms-rtestate-field');
-                            }
+                      SP.SOD.registerSod('sp.publishing.js', SP.Utilities.Utility.getLayoutsPageUrl('sp.publishing.js'));
+                      SP.SOD.executeFunc('sp.publishing.js','SP.Publishing.Navigation',function(){
+                        IsCurrentUserMemberOfGroup('Restricted Access Viewers', function (userInGroup) {
+                            var inDesignMode = document.forms[MSOWebPartPageFormName].MSOLayout_InDesignMode
+                                .value;
+                            if (inDesignMode !== "1") {
 
-                            for (var i = 0; i < fields.length; i++) {
-                                if (fields[i].innerHTML.length > 0) {
-                                    $(fields[i]).closest('.panel').show();
-                                    $(fields[i]).closest('.well').show();
-                                    if($(fields[i]).parent().parent().parent().parent().hasClass('restricted-access')){
-                                      $('.restrictedContentWarning').show();
+                                var fields = [];
+                                if (userInGroup) {
+                                    fields = $('#accordion .panel').find('.ms-rtestate-field');
+                                } else {
+                                    fields = $('#accordion .panel:not(.restricted-access)').find('.ms-rtestate-field');
+                                }
+
+                                for (var i = 0; i < fields.length; i++) {
+                                    if (fields[i].innerHTML.length > 0) {
+                                        $(fields[i]).closest('.panel').show();
+                                        $(fields[i]).closest('.well').show();
+                                        if($(fields[i]).parent().parent().parent().parent().hasClass('restricted-access')){
+                                          $('.restrictedContentWarning').show();
+                                        }
                                     }
                                 }
-                            }
 
-                            $('#news-pannel').closest('.well').show()
-                            $('#news-pannel').show();
-
-                            if(getParameterByName('isNews') == '1'){
-                                $('#collapseEleven').collapse('show');
+                                $('#news-pannel').closest('.well').show()
+                                $('#news-pannel').show();
                                 setTimeout(function(){
-                                    document.getElementById('collapseEleven').scrollIntoView({
-                                        behavior: 'smooth'
-                                    });
-                                },250);
+                                  if(getParameterByName('isNews') == '1'){
+                                    $('#collapseEleven').collapse('show');
+                                    setTimeout(function(){
+                                        document.getElementById('collapseEleven').scrollIntoView({
+                                            behavior: 'smooth'
+                                        });
+                                    },250);
+                                  } else {
+                                      $('#collapseOne').collapse('show');
+                                  }
+                                },500)
                             } else {
-                                $('#collapseOne').collapse('show');
-                            }
-                        } else {
-                            $('.well').show();
-                            $('.panel').show();
-                            if (!userInGroup) {
-                                $('.restricted-access').hide();
-                            }
-                        }
-                    });
-                    IsCurrentUserMemberOfGroup('Syngenta Positions Owners', function (userInGroup) {
-                        if(userInGroup){
-                            $('.emailer').show();
-                        }
-                    });
-                    getCurrentListItem(
-                        function (listItem) {
-                            var catagories = listItem.get_item('Positions_x0020_Catagories');
-                            populateCatagories(catagories._Child_Items_);
+                                $('.well').show();
+                                $('.panel').show();
+                                if (!userInGroup) {
+                                    $('.restricted-access').hide();
+                                }
+                              }
+                            });
+                            IsCurrentUserMemberOfGroup('Syngenta Positions Owners', function (userInGroup) {
+                                if(userInGroup){
+                                    $('.emailer').show();
+                                }
+                            });
+                            getCurrentListItem(
+                                function (listItem) {
+                                    var catagories = listItem.get_item('Positions_x0020_Catagories');
+                                    populateCatagories(catagories);
 
-                            var contacts = listItem.get_item('Position_x0020_Contacts');
-                            populateContacts(contacts);
-                        },
-                        function (sender, args) {
-                            console.log(args.get_message());
-                        }
-                    );
+                                    var contacts = listItem.get_item('Position_x0020_Contacts');
+                                    populateContacts(contacts);
 
+                                    var keywords = listItem.get_item('W365_RelatedTopic')
+                                    populateKeyWords(keywords);
+                                },
+                                function (sender, args) {
+                                    console.log(args.get_message());
+                                }
+                            );
+                          });
+                        });
+                      });
                     if ($('.subscribe-button').length > 0) {
                         getSubscription().then(function (data) {
                             if (data.d.results.length > 0) {
@@ -1154,8 +1186,6 @@
             });
 
             window.onload = function () {
-                $("span:contains('Tags')").text('Keywords');
-
                 $('[data-toggle="tooltip"]').tooltip();
             }
 
@@ -1277,32 +1307,23 @@
             }
 
             function setTermURL(termId){
-              var scriptbase = _spPageContextInfo.webAbsoluteUrl+"/_layouts/15";
-              $.getScript(scriptbase +"/sp.runtime.js",function(){
-                  $.getScript(scriptbase + "/sp.js", function() {
-                      $.getScript(scriptbase + "/sp.publishing.js",function(){
-                          $.getScript(scriptbase + "/sp.taxonomy.js",function(){
 
-                              var ctx = SP.ClientContext.get_current();
-                              var taxSession = SP.Taxonomy.TaxonomySession.getTaxonomySession(ctx);
+              var ctx = SP.ClientContext.get_current();
+              var taxSession = SP.Taxonomy.TaxonomySession.getTaxonomySession(ctx);
 
-                              var term = taxSession.getTerm(termId);
-                              var navTerm = SP.Publishsing.Navigation.NavigationTerm.getAsResolvedByWeb(ctx,term, ctx.get_web(), "CurrentNavigationTaxonomyProvider");
+              var term = taxSession.getTerm(termId);
+              var navTerm = SP.Publishing.Navigation.NavigationTerm.getAsResolvedByWeb(ctx,term, ctx.get_web(), "CurrentNavigationTaxonomyProvider");
 
-                              var displayUrl = navTerm.getResolvedDisplayUrl();
-                              var friendlyUrl = navTerm.getWebRelativeFriendlyUrl();
+              var displayUrl = navTerm.getResolvedDisplayUrl();
+              var friendlyUrl = navTerm.getWebRelativeFriendlyUrl();
 
-                              ctx.executeQueryAsync(function() {
-                                console.log(friendlyUrl.get_value());
-                                console.log(displayUrl.get_value());
-                              },
-                              function(sender,args) {
-                                console.log(args.get_message());
-                              });
-                          })
-                      })
-                  })
-              })
+              ctx.executeQueryAsync(function() {
+                document.getElementById(termId).setAttribute('href',displayUrl.get_value())
+              },
+              function(sender,args) {
+                console.log(args.get_message());
+              });
+
             }
 
             function deleteSubscription(Id) {
@@ -1337,7 +1358,7 @@
                 var web = context.get_web();
                 var currentList = web.get_lists().getById(_spPageContextInfo.pageListId);
                 var currentListItem = currentList.getItemById(_spPageContextInfo.pageItemId);
-                context.load(currentListItem, "Positions_x0020_Catagories", "Position_x0020_Contacts");
+                context.load(currentListItem, "Positions_x0020_Catagories", "Position_x0020_Contacts", "W365_RelatedTopic");
                 context.executeQueryAsync(
                     function () {
                         success(currentListItem);
@@ -1346,20 +1367,39 @@
                 );
             }
 
-            function getPageName(name) {
-                return name.replace(/[^ 0-9a-zA-Z]/g, '').replace(/\s\s/g, '-').replace(/\s/g, '-') + '.aspx';
-            }
-
             function populateCatagories(catagories) {
                 var html = '';
-                for (var i = 0; i < catagories.length; i += 1) {
-                    html +=
-                        '<li class="animated fadeIn" role="presentation" ><a target="_blank" href="/sites/positions/Pages/' +
-                        getPageName(catagories[i].Label) + '" title="' +
-                        catagories[i].Label + '">' + catagories[i].Label + '</a></li>';
-                    setTermURL(catagories[i].TermGuid);
+
+                for(var i = 0; i < catagories.get_count(); i++) {
+                  var label = catagories.get_item(i).get_label();
+                  var guid = catagories.get_item(i).get_termGuid();
+                  html +=
+                        '<li class="animated fadeIn" role="presentation" >' +
+                            '<a id="'+ guid + '"'+
+                              'title="' + label + '">' + label +
+                            '</a>'+
+                          '</li>';
+                    setTermURL(guid);
                 }
+
                 $('.catagories').html(html);
+            }
+
+            function populateKeyWords(keywords){
+              var html = '';
+              var url = _spPageContextInfo.siteAbsoluteUrl;
+              var urlBase = url + '/_layouts/15/osssearchresults.aspx?u=' + url + '&k=owstaxIdW365RelatedTopic: '
+              for(var i = 0; i < keywords.get_count(); i++) {
+                var label = keywords.get_item(i).get_label();
+                var guid = keywords.get_item(i).get_termGuid();
+                html +=
+                      '<li class="animated fadeIn" role="presentation" >' +
+                          '<a id="'+ guid + '" href="' + encodeURI(urlBase + label) + '"' +
+                            'title="' + label + '">' + label +
+                          '</a>'+
+                        '</li>';
+              }
+              $('.keyWords').html(html);
             }
 
             function populateContacts(contacts) {
