@@ -233,7 +233,7 @@
     <link href="https://syngenta.sharepoint.com/Style%20Library/Helios/assets/css/main.css" rel="stylesheet" type="text/css" />
     <link href="https://syngenta.sharepoint.com/Style%20Library/Helios/assets/css/noscript.css" rel="stylesheet" type="text/css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css?v=1" rel="stylesheet" type="text/css" />
-
+    <script type="text/javascript" src="/_layouts/15/sp.taxonomy.js"></script>
     <PublishingWebControls:editmodepanel ID="EditModePanel1" runat="server">
         <!-- Styles for edit mode only-->
         <style type="text/css">
@@ -1104,7 +1104,7 @@
                     getCurrentListItem(
                         function (listItem) {
                             var catagories = listItem.get_item('Positions_x0020_Catagories');
-                            populateCatagories(catagories._Child_Items_)
+                            populateCatagories(catagories._Child_Items_);
 
                             var contacts = listItem.get_item('Position_x0020_Contacts');
                             populateContacts(contacts);
@@ -1276,6 +1276,35 @@
                 });
             }
 
+            function setTermURL(termId){
+              var scriptbase = _spPageContextInfo.webAbsoluteUrl+"/_layouts/15";
+              $.getScript(scriptbase +"/sp.runtime.js",function(){
+                  $.getScript(scriptbase + "/sp.js", function() {
+                      $.getScript(scriptbase + "/sp.publishing.js",function(){
+                          $.getScript(scriptbase + "/sp.taxonomy.js",function(){
+
+                              var ctx = SP.ClientContext.get_current();
+                              var taxSession = SP.Taxonomy.TaxonomySession.getTaxonomySession(ctx);
+
+                              var term = taxSession.getTerm(termId);
+                              var navTerm = SP.Publishsing.Navigation.NavigationTerm.getAsResolvedByWeb(ctx,term, ctx.get_web(), "CurrentNavigationTaxonomyProvider");
+
+                              var displayUrl = navTerm.getResolvedDisplayUrl();
+                              var friendlyUrl = navTerm.getWebRelativeFriendlyUrl();
+
+                              ctx.executeQueryAsync(function() {
+                                console.log(friendlyUrl.get_value());
+                                console.log(displayUrl.get_value());
+                              },
+                              function(sender,args) {
+                                console.log(args.get_message());
+                              });
+                          })
+                      })
+                  })
+              })
+            }
+
             function deleteSubscription(Id) {
                 var siteurl = _spPageContextInfo.siteAbsoluteUrl;
                 $.ajax({
@@ -1327,7 +1356,8 @@
                     html +=
                         '<li class="animated fadeIn" role="presentation" ><a target="_blank" href="/sites/positions/Pages/' +
                         getPageName(catagories[i].Label) + '" title="' +
-                        catagories[i].Label + '">' + catagories[i].Label + '</a></li>'
+                        catagories[i].Label + '">' + catagories[i].Label + '</a></li>';
+                    setTermURL(catagories[i].TermGuid);
                 }
                 $('.catagories').html(html);
             }
@@ -1363,7 +1393,7 @@
                                 '<div class="email notranslate">' +
                                 '<a href="mailto:' + email +
                                 '?subject=Syngenta Positions Site&CC=ourpointofview@syngenta.com&body=' +
-                                emailBody + ' target="_top">' + email + '</a>' +
+                                emailBody + '" target="_top">' + email + '</a>' +
                                 '</div>' +
                                 '</div>' +
                                 '</div>' +
