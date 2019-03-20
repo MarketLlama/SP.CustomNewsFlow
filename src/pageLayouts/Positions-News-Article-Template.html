@@ -1318,7 +1318,7 @@
               var friendlyUrl = navTerm.getWebRelativeFriendlyUrl();
 
               ctx.executeQueryAsync(function() {
-                document.getElementById(termId).setAttribute('href',displayUrl.get_value())
+                document.getElementById(termId).setAttribute('href',displayUrl.get_value());
               },
               function(sender,args) {
                 console.log(args.get_message());
@@ -1386,9 +1386,11 @@
             }
 
             function populateKeyWords(keywords){
+
               var html = '';
               var url = _spPageContextInfo.siteAbsoluteUrl;
-              var urlBase = url + '/_layouts/15/osssearchresults.aspx?u=' + url + '&k=owstaxIdW365RelatedTopic: '
+              var urlBase = url + '/_layouts/15/osssearchresults.aspx?u=' + url + '&k=owstaxIdW365RelatedTopic: ';
+
               for(var i = 0; i < keywords.get_count(); i++) {
                 var label = keywords.get_item(i).get_label();
                 var guid = keywords.get_item(i).get_termGuid();
@@ -1413,11 +1415,13 @@
                 context.executeQueryAsync(
                     function () {
                         var htmlrow = '';
+                        var isMobile = detectMob();
                         for (var i = 0; i < userArray.length; i++) {
                             var email = userArray[i].get_email();
                             var emailBody = encodeURI('Page URL : ' + window.location.href);
                             var login = userArray[i].get_loginName();
                             var displayName = userArray[i].get_title();
+                            var emailLink = (isMobile)? getMobileEmailLink(email, 'ourpointofview@syngenta.com', 'Syngenta Positions Site', emailBody) : getDesktopEmailLink(email, 'ourpointofview@syngenta.com', 'Syngenta Positions Site', emailBody);
                             htmlrow += '<div class="animated fadeIn wizdom-pageInfo-row"> ' +
                                 '<div class="wizdom-pageInfo-imgColumn">' +
                                 '<div class="avatar-frame">' +
@@ -1431,9 +1435,7 @@
                                     '|')[2] + '&v=work" title="' + displayName + '">' + displayName + '</a>' +
                                 '</div>' +
                                 '<div class="email notranslate">' +
-                                '<a href="mailto:' + email +
-                                '?subject=Syngenta Positions Site&CC=ourpointofview@syngenta.com&body=' +
-                                emailBody + '" target="_top">' + email + '</a>' +
+                                '<a href="'+ emailLink + '" target="_top">' + email + '</a>' +
                                 '</div>' +
                                 '</div>' +
                                 '</div>' +
@@ -1448,5 +1450,37 @@
 
                 );
             }
+
+            function getMobileEmailLink(to, cc,  subject, body) {
+              var baseURL = 'https://outlook.office.com/?path=/mail/action/compose'
+              var to= '&' + to;
+              var subject = '&' + subject;
+              var body = '&' + body;
+              return encodeURI(baseURL + to + subject + body);
+            }
+
+            function getDesktopEmailLink(to, cc, subject, body){
+              var baseURL = 'mailto:' + to + '?';
+              var subject = 'subject=' + subject;
+              var cc = '&CC=' + cc;
+              var body = '&body=' + body;
+              return encodeURI(baseURL + subject + cc +  body);
+            }
+
+            function detectMob() {
+              if( navigator.userAgent.match(/Android/i)
+                || navigator.userAgent.match(/webOS/i)
+                || navigator.userAgent.match(/iPhone/i)
+                || navigator.userAgent.match(/iPad/i)
+                || navigator.userAgent.match(/iPod/i)
+                || navigator.userAgent.match(/BlackBerry/i)
+                || navigator.userAgent.match(/Windows Phone/i)
+              ){
+                  return true;
+                }
+              else {
+                  return false;
+                }
+              }
         </script>
 </asp:Content>
